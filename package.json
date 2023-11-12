@@ -1,0 +1,37 @@
+{
+  "name": "enigamier",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/enigamier.umd.cjs",
+  "module": "./dist/enigamier.js",
+  "exports": {
+    ".": {
+      "import": "./dist/enigamier.js",
+      "require": "./dist/enigamier.umd.cjs"
+    },
+    "./secondary": {
+      "import": "./dist/secondary.js",
+      "require": "./dist/secondary.umd.cjs"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@stylistic/eslint-plugin": "^1.1.0",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "prettier": "^3.0.3",
+    "eslint": "^8.53.0",
+    "eslint-plugin-import": "^2.29.0",
+    "typescript": "^5.0.2",
+    "vite": "^4.4.5"
+  }
+}
