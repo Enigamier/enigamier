@@ -65,6 +65,7 @@ module.exports = {
     '@stylistic/block-spacing': ['error', 'always'],
     '@stylistic/comma-spacing': 'error',
     '@stylistic/computed-property-spacing': 'error',
+    '@stylistic/func-call-spacing': 'error',
     '@stylistic/generator-star-spacing': 'error',
     '@stylistic/key-spacing': 'error',
     '@stylistic/keyword-spacing': 'error',
