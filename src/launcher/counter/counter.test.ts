@@ -1,4 +1,4 @@
-import { setupCounter } from './counter'
+import { setupCounter } from '.'
 
 describe('counter', () => {
   it('shold do somethiing', () => {
