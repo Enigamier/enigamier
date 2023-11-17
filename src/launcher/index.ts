@@ -2,43 +2,49 @@ import { DogePongGame } from '@/games/DogePong'
 
 import './index.css'
 
-const appElement = document.querySelector<HTMLDivElement>('#app')
-const games: Record<string, (canvasId: string) => void> = { dogepong: DogePongGame }
+const games: Record<string, (canvasId: string) => void> = { DogePong: DogePongGame }
+const gameButtonsTemplate = Object.keys(games).map(gameId => `
+  <button class="button" data-game-id="${gameId}">${gameId}</button>
+`)
+const launcherElem = launcherView()
+const gameContainerElem = launcherElem.querySelector('#game-container')!
 
-function updateAppContent(content: string) {
-  if (appElement) {
-    appElement.innerHTML = content
-  }
-}
-
-function gameView(gameId: string) {
-  updateAppContent(`
-    <main class="">
+function launcherView(): HTMLElement {
+  const elem = document.createElement('main')
+  elem.innerHTML = `
+    <div class="games-selector">
       <button id="back-button" class="button">Back</button>
-      <div>
-        <canvas id="game-canvas" class="game-canvas" width="1200" height="700"></canvas>
-      </div>
-    </main>
-  `)
-  const canvas: null | HTMLCanvasElement = document.querySelector('#game-canvas')
-  const game = games[gameId]
+      ${gameButtonsTemplate}
+    </div>
+    <div id="game-container" class="game-content"></div>
+  `
 
-  document.querySelector('#back-button')?.addEventListener('click', homeView)
-  canvas && game('game-canvas')
-}
-
-function homeView() {
-  updateAppContent(`
-    <main class="">
-      <button class="button" data-game-id="dogepong">DogePong</button>
-    </main>
-  `)
-  appElement?.querySelectorAll('button[data-game-id]').forEach(button => {
+  const gamesButtonsElems = elem.querySelectorAll('button[data-game-id]')
+  gamesButtonsElems.forEach(button => {
     button.addEventListener('click', () => {
-      const gameId = button.getAttribute('data-game-id')
-      gameId && gameView(gameId)
+      const gameId = button.getAttribute('data-game-id')!
+      launchGame(gameId)
+      elem.querySelector('button[data-game-id].button--active')?.classList.remove('button--active')
+      button.classList.add('button--active')
     })
   })
+
+  elem.querySelector('#back-button')?.addEventListener('click', () => {
+    gameContainerElem.innerHTML = ''
+    elem.querySelector('button[data-game-id].button--active')?.classList.remove('button--active')
+  })
+
+  return elem
 }
 
-homeView()
+function launchGame(gameId: string) {
+  const canvasId = `game-canvas-${gameId}`
+  gameContainerElem.innerHTML = `
+    <div class="game-canvas-wrapper">
+      <canvas id="${canvasId}" class="game-canvas" width="1200" height="700"></canvas>
+    </div>
+  `
+  games[gameId](canvasId)
+}
+
+document.querySelector<HTMLDivElement>('#app')?.appendChild(launcherElem)

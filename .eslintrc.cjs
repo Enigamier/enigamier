@@ -77,6 +77,8 @@ module.exports = {
     '@stylistic/yield-star-spacing': ['error', 'before'],
     'array-callback-return': ['error'],
     'prefer-arrow-callback': ['error'],
+    '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+    '@typescript-eslint/consistent-type-imports': 'error',
   },
   overrides: [
     {

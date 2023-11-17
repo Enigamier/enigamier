@@ -1,5 +1,6 @@
-import { Scene } from '@/scenes/Scene'
+import type { Scene } from '@/scenes/Scene'
 import { Renderer } from '@/Renderer'
+import { GlobalController } from '@/controllers/GlobalController'
 
 interface EnigamierOptions {
   autoResize: boolean;
@@ -20,11 +21,15 @@ export class Enigamier {
 
   private renderer: Renderer
 
+  private globalController: GlobalController
+
   constructor(canvasId: string, options?: EnigamierOptions) {
     this.initCanvas(canvasId)
     this.options = this.mergeDefaultOptions(options)
     console.log(this.options)
     this.renderer = new Renderer()
+    this.globalController = new GlobalController(this.canvas)
+    this.globalController.init()
   }
 
   public start(scene: Scene) {
@@ -35,11 +40,18 @@ export class Enigamier {
 
   public shutdown() {
     this.unloadCurrentScene()
+    this.globalController.shutdown()
     this.renderer.stop()
   }
 
   public registerScene(scene: Scene) {
+    scene.register({ enigamier: this, gc: this.globalController })
     this.scenes[scene.id] = scene
+  }
+
+  public loadScene(id: string) {
+    this.unloadCurrentScene()
+    this.currentScene = this.scenes[id]
   }
 
   private initCanvas(canvasId: string) {
@@ -47,15 +59,11 @@ export class Enigamier {
     if (canvas) {
       this.canvas = canvas
       this.canvasContext = this.getContext(canvas)
-      document.addEventListener('keydown', (ev: KeyboardEvent) => {
-        if (ev.key.includes('Arrow')) {
-          const diff = ev.key.includes('Up') ? .1 : -.1
-          this.renderer.setSpeed(this.renderer.currentSpeed + diff)
-        }
-      })
       const observer = new MutationObserver(() => {
-        if (!document.querySelector(`#${canvasId}`)) {
+        const canvasElem = document.querySelector(`#${canvasId}`)
+        if (canvasElem !== this.canvas) {
           this.shutdown()
+          observer.disconnect()
         }
       })
       observer.observe(document, { subtree: true, childList: true })
@@ -65,7 +73,7 @@ export class Enigamier {
   }
 
   private getContext(canvas: HTMLCanvasElement): CanvasRenderingContext2D {
-    const context = canvas.getContext('2d')
+    const context = canvas.getContext('2d', { desynchronized: true })
     if (context instanceof CanvasRenderingContext2D) {
       return context
     } else {
@@ -78,12 +86,8 @@ export class Enigamier {
     return { ...defaultOptions, ...newOptions }
   }
 
-  private loadScene(id: string) {
-    this.unloadCurrentScene()
-    this.currentScene = this.scenes[id]
-  }
-
   private unloadCurrentScene() {
+    this.currentScene?.unload()
     this.currentScene = undefined
   }
 

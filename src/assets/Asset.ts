@@ -1,14 +1,24 @@
-import { Texture } from '@/textures/Texture'
+import type { GlobalController, Texture } from '@/index'
+
+export interface AssetContext {
+  gc: GlobalController;
+}
 
 export abstract class Asset {
-  public id: string
+  public abstract readonly id: string
 
   public texture: Texture
 
-  constructor(id: string, texture: Texture) {
-    this.id = id
+  protected context: AssetContext
+
+  constructor(context: AssetContext, texture: Texture) {
+    this.context = context
     this.texture = texture
   }
+
+  public load?(): void
+
+  public unload?(): void
 
   public abstract update(): void
 }

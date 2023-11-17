@@ -1,4 +1,7 @@
 export * from './enigamier'
 export * from './scenes/Scene'
+export * from './controllers/GlobalController'
+export * from './controllers/KeyboardController'
+export * from './controllers/MouseController'
 export * from './assets/Asset'
 export * from './textures/Texture'
