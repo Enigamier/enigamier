@@ -8,44 +8,65 @@ class RectangleTexture extends Texture {
   public color = 'rgb(255, 0, 0)'
 
   public render(cxt: CanvasRenderingContext2D) {
+    super.render(cxt)
     cxt.fillStyle = this.color
     cxt.fillRect(this.position.x, this.position.y, this.size.width, this.size.height)
   }
 }
 
+interface RectangleMoveKeys {
+  up: string;
+  down: string;
+  right: string;
+  left: string;
+}
+
 export class RectangleAsset extends Asset {
-  public readonly id = 'RectangleAsset'
+  declare public texture: RectangleTexture
+
+  public id = 'RectangleAsset'
 
   private moveSpeed = 6
 
-  private readonly kbController: KeyboardController
+  private kbController!: KeyboardController
 
-  declare public texture: RectangleTexture
+  private moveKeys: RectangleMoveKeys
 
-  constructor(context: AssetContext) {
-    super(context, new RectangleTexture())
+  constructor(moveKeys: RectangleMoveKeys) {
+    super(new RectangleTexture())
+    this.moveKeys = moveKeys
+  }
+
+  private get moveKeysCodesMap() {
+    return Object.values(this.moveKeys).reduce((codesMap, keyCode) => ({ ...codesMap, [keyCode]: true }), {})
+  }
+
+  public load(context: AssetContext): void {
+    super.load(context)
     this.kbController = context.gc.controllers.keyboard as KeyboardController
     const mouseController = context.gc.controllers.mouse as MouseController
-    mouseController.addEventListener('click', this.onCanvasClick.bind(this))
+    mouseController.addEventListener('click', this.onCanvasClick.bind(this), this.abortController.signal)
   }
 
   public update(): void {
     const { x, y } = this.texture.position
-    const areArrowsPressed = Object.keys(this.kbController.inputs).filter(key => key.startsWith('Arrow')).length > 0
+    const areArrowsPressed = Object.keys(this.kbController.inputs).some(key => this.moveKeysCodesMap[key])
 
     if (areArrowsPressed) {
+      const { up, down, left, right } = this.moveKeys
       const newX =
         x +
-        (this.kbController.inputs.ArrowLeft ? -this.moveSpeed : 0) +
-        (this.kbController.inputs.ArrowRight ? this.moveSpeed : 0)
+        (this.kbController.inputs[left] ? -this.moveSpeed : 0) +
+        (this.kbController.inputs[right] ? this.moveSpeed : 0)
       const newY =
         y +
-        (this.kbController.inputs.ArrowUp ? -this.moveSpeed : 0) +
-        (this.kbController.inputs.ArrowDown ? this.moveSpeed : 0)
+        (this.kbController.inputs[up] ? -this.moveSpeed : 0) +
+        (this.kbController.inputs[down] ? this.moveSpeed : 0)
       this.texture.position = {
-        x: Math.min(Math.max(newX, 0), 1000),
-        y: Math.min(Math.max(newY, 0), 600),
+        x: newX,
+        y: newY,
       }
+      this.fixToScope()
     }
   }
 

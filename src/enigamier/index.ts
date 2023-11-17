@@ -9,7 +9,7 @@ interface EnigamierOptions {
 const defaultOptions: EnigamierOptions = { autoResize: false }
 
 export class Enigamier {
-  private canvas!: HTMLCanvasElement
+  public canvas!: HTMLCanvasElement
 
   private canvasContext!: CanvasRenderingContext2D
 
@@ -45,13 +45,14 @@ export class Enigamier {
   }
 
   public registerScene(scene: Scene) {
-    scene.register({ enigamier: this, gc: this.globalController })
     this.scenes[scene.id] = scene
   }
 
   public loadScene(id: string) {
     this.unloadCurrentScene()
-    this.currentScene = this.scenes[id]
+    const newScene = this.scenes[id]
+    newScene.load({ enigamier: this, gc: this.globalController })
+    this.currentScene = newScene
   }
 
   private initCanvas(canvasId: string) {
@@ -98,7 +99,11 @@ export class Enigamier {
   private onRender() {
     if (this.currentScene) {
       this.clearCanvas()
-      this.currentScene.sortedAssetsByTexture.forEach(asset => asset.texture.render(this.canvasContext))
+      this.currentScene.sortedAssetsByTexture.forEach(asset => {
+        this.canvasContext.save()
+        asset.texture.render(this.canvasContext)
+        this.canvasContext.restore()
+      })
     }
   }
 

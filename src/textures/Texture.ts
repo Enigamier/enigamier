@@ -6,6 +6,13 @@ interface TextureSize {
   width: number; height: number;
 }
 
+interface TextureScope {
+  startX: number;
+  startY: number;
+  endX?: number;
+  endY?: number;
+}
+
 export abstract class Texture {
   public index = 0
 
@@ -13,5 +20,10 @@ export abstract class Texture {
 
   public size: TextureSize = { width: 0, height: 0 }
 
-  public abstract render(cxt: CanvasRenderingContext2D): void
+  public scope: TextureScope = { startX: 0, startY: 0 }
+
+  public render(cxt: CanvasRenderingContext2D) {
+    const { startX, startY } = this.scope
+    cxt.translate(startX, startY)
+  }
 }

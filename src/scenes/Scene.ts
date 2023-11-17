@@ -1,4 +1,4 @@
-import type { Asset } from '@/assets/Asset'
+import type { Asset, AssetContext } from '@/assets/Asset'
 import type { Enigamier, GlobalController } from '@/index'
 
 export interface SceneContext {
@@ -23,25 +23,23 @@ export abstract class Scene {
     return this.assetsList.sort((assetA, assetB) => assetA.texture.index - assetB.texture.index)
   }
 
-  public register(context: SceneContext) {
+  public load(context: SceneContext) {
     this.context = context
-  }
-
-  public load() {
-    Object.values(this.assets).forEach(asset => asset.load && asset.load())
+    const assetContext: AssetContext = { gc: context.gc }
+    Object.values(this.assets).forEach(asset => asset.load(assetContext))
   }
 
   public unload() {
-    Object.values(this.assets).forEach(asset => asset.unload && asset.unload())
+    Object.values(this.assets).forEach(this.removeAsset.bind(this))
   }
 
   protected addAsset(asset: Asset) {
+    this.loaded && asset.load({ gc: this.context.gc })
     this.assets[asset.id] = asset
-    this.loaded && asset.load && asset.load()
   }
 
   protected removeAsset(asset: Asset) {
-    asset.unload && asset.unload()
+    asset.unload()
     delete this.assets[asset.id]
   }
 }
