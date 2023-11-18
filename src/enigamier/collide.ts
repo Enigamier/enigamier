@@ -1,18 +1,12 @@
 import type { AssetCollidable, AssetHitbox } from '@/assets/AssetCollidable'
 import type { TextureScope } from '@/textures/Texture'
 
-function areScopesOverlapping(firstScope: TextureScope, secondCope: TextureScope): boolean {
-  const startOverlapsX = firstScope.startX >= secondCope.startX && firstScope.startX <= secondCope.endX
-  const startOverlapsY = firstScope.startY >= secondCope.startY && firstScope.startY <= secondCope.endY
-  const endOverlapsX = firstScope.endX >= secondCope.startX && firstScope.endX <= secondCope.endX
-  const endOverlapsY = firstScope.endY >= secondCope.startY && firstScope.endY <= secondCope.endY
-  const startInsetX = secondCope.startX >= firstScope.startX && secondCope.startX <= firstScope.endX
-  const startInsetY = secondCope.startY >= firstScope.startY && secondCope.startY <= firstScope.endY
-  const endInsetX = secondCope.endX >= firstScope.startX && secondCope.endX <= firstScope.endX
-  const endInsetY = secondCope.endY >= firstScope.startY && secondCope.endY <= firstScope.endY
+function areRectanglesOverlapping(rect1: TextureScope, rect2: TextureScope): boolean {
   return (
-    (startOverlapsX || endOverlapsX) && (startOverlapsY || endOverlapsY) ||
-    (startInsetX || endInsetX) && (startInsetY || endInsetY)
+    rect1.startX < rect2.endX &&
+    rect1.endX > rect2.startX &&
+    rect1.startY < rect2.endY &&
+    rect1.endY > rect2.startY
   )
 }
 
@@ -29,18 +23,21 @@ function getAssetGlobalHitbox(asset: AssetCollidable): AssetHitbox {
 function areHitboxesOverlapping(asset1: AssetCollidable, asset2: AssetCollidable) {
   const globalHb1 = getAssetGlobalHitbox(asset1)
   const globalHb2 = getAssetGlobalHitbox(asset2)
-  return areScopesOverlapping(globalHb1, globalHb2)
+  return areRectanglesOverlapping(globalHb1, globalHb2)
 }
 
 export function checkCollisions(assets: AssetCollidable[]) {
-  assets.forEach((currentAsset, index) => {
-    const currentScope = currentAsset.texture.scope
+  assets.forEach((asset1, index) => {
+    const currentScope = asset1.texture.scope
     for (let collideI = index + 1; collideI < assets.length; collideI++) {
-      const checkingAsset = assets[collideI]
-      const { texture: { scope: checkingScope } } = checkingAsset
-      if (areScopesOverlapping(currentScope, checkingScope) && areHitboxesOverlapping(currentAsset, checkingAsset)) {
-        currentAsset.onCollide && currentAsset.onCollide(checkingAsset)
-        checkingAsset.onCollide && checkingAsset.onCollide(currentAsset)
+      const asset2 = assets[collideI]
+      const { texture: { scope: checkingScope } } = asset2
+      if (
+        areRectanglesOverlapping(currentScope, checkingScope) &&
+        areHitboxesOverlapping(asset1, asset2)
+      ) {
+        asset1.onCollide && asset1.onCollide(asset2)
+        asset2.onCollide && asset2.onCollide(asset1)
       }
     }
   })

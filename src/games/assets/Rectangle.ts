@@ -64,6 +64,8 @@ export class RectangleAsset extends AssetCollidable {
         this.move()
         this.fixToScope()
       }
+    } else {
+      this.movement.distance = 0
     }
   }
 
