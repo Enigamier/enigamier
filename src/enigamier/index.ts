@@ -1,6 +1,9 @@
 import type { Scene } from '@/scenes/Scene'
 import { Renderer } from '@/Renderer'
 import { GlobalController } from '@/controllers/GlobalController'
+import { AssetCollidable } from '@/assets/AssetCollidable'
+
+import { checkCollisions } from './collide'
 
 interface EnigamierOptions {
   autoResize: boolean;
@@ -96,6 +99,14 @@ export class Enigamier {
     this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
+  private onUpdate() {
+    if (this.currentScene) {
+      const assets = this.currentScene.assetsList
+      assets.forEach(asset => asset.update())
+      checkCollisions(assets.filter(asset => asset instanceof AssetCollidable) as AssetCollidable[])
+    }
+  }
+
   private onRender() {
     if (this.currentScene) {
       this.clearCanvas()
@@ -104,12 +115,6 @@ export class Enigamier {
         asset.texture.render(this.canvasContext)
         this.canvasContext.restore()
       })
-    }
-  }
-
-  private onUpdate() {
-    if (this.currentScene) {
-      this.currentScene.assetsList.forEach(asset => asset.update())
     }
   }
 }

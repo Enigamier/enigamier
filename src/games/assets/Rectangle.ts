@@ -1,5 +1,5 @@
 import type { AssetContext, KeyboardController, MouseController, MouseEventPayload } from '@/index'
-import { Asset, Texture } from '@/index'
+import { AssetCollidable, Texture } from '@/index'
 
 class RectangleTexture extends Texture {
 
@@ -21,7 +21,7 @@ interface RectangleMoveKeys {
   left: string;
 }
 
-export class RectangleAsset extends Asset {
+export class RectangleAsset extends AssetCollidable {
   declare public texture: RectangleTexture
 
   public id = 'RectangleAsset'
@@ -68,6 +68,15 @@ export class RectangleAsset extends Asset {
       }
       this.fixToScope()
     }
+  }
+
+  public onCollide(): void {
+    const { r, g, b } = {
+      r: Math.round(Math.random() * 255),
+      g: Math.round(Math.random() * 255),
+      b: Math.round(Math.random() * 255),
+    }
+    this.texture.color = `rgb(${r}, ${g}, ${b})`
   }
 
   private isCoordinateInset(x: number, y: number): boolean {

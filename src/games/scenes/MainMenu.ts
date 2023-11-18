@@ -19,6 +19,7 @@ export class MainMenuScene extends Scene {
       left: 'ArrowLeft',
       right: 'ArrowRight',
     })
+    firstRectangleAsset.texture.size = { width: 200, height: 200 }
     firstRectangleAsset.texture.scope = rectanglesScope
     const secondRectangleAsset = new RectangleAsset({
       up: 'w',
@@ -27,7 +28,7 @@ export class MainMenuScene extends Scene {
       right: 'd',
     })
     secondRectangleAsset.id = 'secondRectangle'
-    secondRectangleAsset.texture.position = { x: 200, y: 100 }
+    secondRectangleAsset.texture.position = { x: 300, y: 200 }
     secondRectangleAsset.texture.color = 'pink'
     secondRectangleAsset.texture.scope = rectanglesScope
     this.addAsset(firstRectangleAsset)
