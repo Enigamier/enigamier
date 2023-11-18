@@ -26,7 +26,7 @@ export class RectangleAsset extends AssetCollidable {
 
   public id = 'RectangleAsset'
 
-  private moveSpeed = 6
+  private moveSpeed = 10
 
   private kbController!: KeyboardController
 
@@ -49,24 +49,21 @@ export class RectangleAsset extends AssetCollidable {
   }
 
   public update(): void {
-    const { x, y } = this.texture.position
     const areArrowsPressed = Object.keys(this.kbController.inputs).some(key => this.moveKeysCodesMap[key])
 
     if (areArrowsPressed) {
       const { up, down, left, right } = this.moveKeys
-      const newX =
-        x +
-        (this.kbController.inputs[left] ? -this.moveSpeed : 0) +
-        (this.kbController.inputs[right] ? this.moveSpeed : 0)
-      const newY =
-        y +
-        (this.kbController.inputs[up] ? -this.moveSpeed : 0) +
-        (this.kbController.inputs[down] ? this.moveSpeed : 0)
-      this.texture.position = {
-        x: newX,
-        y: newY,
+      const { [up]: isUp, [down]: isDown, [left]: isLeft, [right]: isRight } = this.kbController.inputs
+      const relativeX = 0 + (isLeft ? -1 : 0) + (isRight ? 1 : 0)
+      const relativeY = 0 + (isUp ? -1 : 0) + (isDown ? 1 : 0)
+      if (relativeX || relativeY) {
+        this.movement = {
+          distance: this.moveSpeed,
+          angle: Math.atan2(relativeY, relativeX),
+        }
+        this.move()
+        this.fixToScope()
       }
-      this.fixToScope()
     }
   }
 

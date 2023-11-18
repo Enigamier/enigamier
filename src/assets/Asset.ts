@@ -4,10 +4,17 @@ export interface AssetContext {
   gc: GlobalController;
 }
 
+export interface AssetMovement {
+  angle: number;
+  distance: number;
+}
+
 export abstract class Asset {
   public abstract readonly id: string
 
   public texture: Texture
+
+  protected movement: AssetMovement = { angle: 0, distance: 0 }
 
   protected context!: AssetContext
 
@@ -26,6 +33,19 @@ export abstract class Asset {
     this.abortController.abort()
   }
 
+  public abstract update(): void
+
+  protected move() {
+    const { angle, distance } = this.movement
+    if (distance > 0) {
+      const { x, y } = this.texture.position
+      this.texture.position = {
+        x: x + Math.round(Math.cos(angle) * distance),
+        y: y + Math.round(Math.sin(angle) * distance),
+      }
+    }
+  }
+
   protected fixToScope() {
     const { x, y } = this.texture.position
     const { width, height } = this.texture.size
@@ -35,6 +55,4 @@ export abstract class Asset {
       y: Math.max(Math.min(y, endY! - height - startY), 0),
     }
   }
-
-  public abstract update(): void
 }
