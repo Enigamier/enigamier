@@ -12,8 +12,12 @@ class ButtonTexture extends Texture {
 
   public icon = ''
 
+  public bgStartColor = 'red'
+
+  public bgEndColor = 'yellow'
+
   private get blur(): number {
-    return this.getValueByState({ hover: 8, active: 1 }, 5)
+    return this.getValueByState({ hover: 10, active: 3 }, 5)
   }
 
   private get offset() {
@@ -24,15 +28,13 @@ class ButtonTexture extends Texture {
     super.render(cxt)
     const { width, height } = this.size
     const { x: centerX, y: centerY } = this.centerPoint
-    const bgStartColor = 'red'
-    const bgEndColor = 'yellow'
     const borderRadius = 10
-    const textColor = 'white'
+    const textColor = 'whitesmoke'
 
     // Background
     const fillGrad = cxt.createLinearGradient(0, 0, 0, height)
-    fillGrad.addColorStop(this.offset, bgStartColor)
-    fillGrad.addColorStop(1, bgEndColor)
+    fillGrad.addColorStop(this.offset, this.bgStartColor)
+    fillGrad.addColorStop(1, this.bgEndColor)
     cxt.fillStyle = fillGrad
     cxt.miterLimit = 1
 

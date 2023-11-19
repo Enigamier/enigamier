@@ -18,17 +18,24 @@ export class MainMenuScene extends MenuScene {
     pongText.texture.isGradient = true
 
     // Buttons
-    const buttonLocal = new Button(width * .05, height * .5, () => console.log('clicked'))
-    buttonLocal.texture.size = { width: width * .16, height: height * .07 }
-    buttonLocal.texture.text = 'Jugar en local'
-    const buttonNetwork = new Button(width * .79, height * .5, () => console.log('clicked'))
-    buttonNetwork.texture.size = { width: width * .16, height: height * .07 }
-    buttonNetwork.texture.text = 'Jugar en red'
+    const buttonsSize = { width: width * .16, height: height * .07 }
+    const buttonsY = (height / 2) - (buttonsSize.height / 2)
+    const localButton = new Button(width * .05, buttonsY, this.onLocalButtonClick.bind(this))
+    localButton.texture.size = buttonsSize
+    localButton.texture.text = 'Local game'
+    const networkButton = new Button(width * .79, buttonsY, () => undefined)
+    networkButton.texture.size = buttonsSize
+    networkButton.texture.text = 'Network game'
+    networkButton.isDisabled = true
 
     this.addAsset(dogeText)
     this.addAsset(pongText)
-    this.addAsset(buttonLocal)
-    this.addAsset(buttonNetwork)
+    this.addAsset(localButton)
+    this.addAsset(networkButton)
     super.load(ctx)
+  }
+
+  private onLocalButtonClick() {
+    this.context.enigamier.loadScene('ControlsMenu')
   }
 }

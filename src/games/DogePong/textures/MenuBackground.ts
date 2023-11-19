@@ -1,6 +1,6 @@
 import { Texture } from '@/index'
 
-import dogeImage from '../imgs/doge_disk350.png'
+import dogeImage from '../imgs/doge_disk.png'
 
 export class MenuBackgroundTexture extends Texture {
   private readonly img: HTMLImageElement
