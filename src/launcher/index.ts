@@ -1,8 +1,8 @@
-import { DogePongGame } from '@/games/DogePong/DogePong'
+import { dogePongGame } from '@/games/DogePong/DogePong'
 
 import './index.css'
 
-const games: Record<string, (canvasId: string) => void> = { DogePong: DogePongGame }
+const games: Record<string, (canvasId: string) => void> = { dogePong: dogePongGame }
 const gameButtonsTemplate = Object.keys(games).map(gameId => `
   <button class="button" data-game-id="${gameId}">${gameId}</button>
 `)
@@ -14,7 +14,7 @@ function launcherView(): HTMLElement {
   elem.innerHTML = `
     <div class="games-selector">
       <button id="back-button" class="button">Back</button>
-      ${gameButtonsTemplate}
+      ${gameButtonsTemplate.join('')}
     </div>
     <div id="game-container" class="game-content"></div>
   `
@@ -41,7 +41,7 @@ function launchGame(gameId: string) {
   const canvasId = `game-canvas-${gameId}`
   gameContainerElem.innerHTML = `
     <div class="game-canvas-wrapper">
-      <canvas id="${canvasId}" class="game-canvas" width="1200" height="700"></canvas>
+      <canvas id="${canvasId}" class="game-canvas" width="1920" height="1080"></canvas>
     </div>
   `
   games[gameId](canvasId)

@@ -8,9 +8,9 @@ export class ExampleScene extends Scene {
 
   public load(context: SceneContext): void {
     const { enigamier: { canvas } } = context
-    const button1 = new Button(300, 0, () => this.removeAsset(firstRectangleAsset))
+    const button1 = new Button(300, 50, () => this.removeAsset(firstRectangleAsset))
     button1.isDisabled = true
-    const button2 = new Button(400, 0, () => this.removeAsset(secondRectangleAsset))
+    const button2 = new Button(500, 50, () => this.removeAsset(secondRectangleAsset))
     const rectanglesScope = {
       startX: 0,
       startY: 0,

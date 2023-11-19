@@ -75,16 +75,21 @@ module.exports = {
     '@stylistic/template-curly-spacing': ['error', 'never'],
     '@stylistic/type-annotation-spacing': 'error',
     '@stylistic/yield-star-spacing': ['error', 'before'],
-    'array-callback-return': ['error'],
-    'prefer-arrow-callback': ['error'],
+    'array-callback-return': 'error',
+    'prefer-arrow-callback': 'error',
+    'prefer-template': 'error',
     '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
     '@typescript-eslint/consistent-type-imports': 'error',
+    '@typescript-eslint/naming-convention': 'error',
+    '@typescript-eslint/restrict-template-expressions': 'error',
+    '@typescript-eslint/prefer-readonly': 'error',
   },
   overrides: [
     {
       env: { node: true },
       files: ['.eslintrc.{js,cjs}'],
       parserOptions: { sourceType: 'script' },
+      rules: { '@typescript-eslint/naming-convention': 'off' },
     },
   ],
 }

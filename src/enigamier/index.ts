@@ -16,15 +16,15 @@ export class Enigamier {
 
   private canvasContext!: CanvasRenderingContext2D
 
-  private options: EnigamierOptions
+  private readonly options: EnigamierOptions
 
   private scenes: Record<string, Scene> = {}
 
   private currentScene: Scene | undefined
 
-  private renderer: Renderer
+  private readonly renderer: Renderer
 
-  private globalController: GlobalController
+  private readonly globalController: GlobalController
 
   constructor(canvasId: string, options?: EnigamierOptions) {
     this.initCanvas(canvasId)

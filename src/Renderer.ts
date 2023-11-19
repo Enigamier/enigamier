@@ -10,9 +10,9 @@ export class Renderer {
 
   private lastFrameTs = 0
 
-  private renderCallback: RenderCallback
+  private readonly renderCallback: RenderCallback
 
-  private updateCallback: UpdateCallback
+  private readonly updateCallback: UpdateCallback
 
   constructor(renderCallback: RenderCallback, updateCallback: UpdateCallback) {
     this.renderCallback = renderCallback

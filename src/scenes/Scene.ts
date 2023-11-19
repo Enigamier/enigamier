@@ -44,13 +44,6 @@ export abstract class Scene {
     this.sortedAssetsByTexture.forEach(this.renderAsset.bind(this))
   }
 
-  protected renderAsset(asset: Asset) {
-    const { canvasContext: ctx } = this.context
-    ctx.save()
-    asset.texture.render(ctx)
-    ctx.restore()
-  }
-
   protected addAsset(asset: Asset) {
     this.loaded && asset.load({ gc: this.context.gc })
     this.assets[asset.id] = asset
@@ -59,6 +52,13 @@ export abstract class Scene {
   protected removeAsset(asset: Asset) {
     asset.unload()
     delete this.assets[asset.id]
+  }
+
+  private renderAsset(asset: Asset) {
+    const { canvasContext: ctx } = this.context
+    ctx.save()
+    asset.texture.render(ctx)
+    ctx.restore()
   }
 
   private initBgTexture() {

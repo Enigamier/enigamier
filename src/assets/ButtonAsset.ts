@@ -25,7 +25,7 @@ export abstract class ButtonAsset extends Asset {
     this.mouseController.addEventListener('mousemove', this.onCanvasMouseMove.bind(this), this.abortController.signal)
   }
 
-  private onClick: ButtonAssetClickCallback
+  private readonly onClick: ButtonAssetClickCallback
 
   private isPointInside(pointX: number, pointY: number): boolean {
     const { startX, startY, endX, endY } = this.globalCoords

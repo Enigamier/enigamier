@@ -22,6 +22,11 @@ export abstract class Texture {
 
   public scope: TextureScope = { startX: 0, startY: 0, endX: 0, endY: 0 }
 
+  protected get centerPoint(): TexturePosition {
+    const { position: { x, y }, size: { width, height } } = this
+    return { x: Math.round(x + width / 2), y: Math.round(y + height / 2) }
+  }
+
   public render(cxt: CanvasRenderingContext2D) {
     const { startX, startY } = this.scope
     cxt.translate(startX, startY)

@@ -4,7 +4,7 @@ import { Controller } from './Controller'
 export class GlobalController {
   public controllers: Record<string, Controller> = {}
 
-  private canvas: HTMLCanvasElement
+  private readonly canvas: HTMLCanvasElement
 
   private abortController: AbortController = new AbortController()
 

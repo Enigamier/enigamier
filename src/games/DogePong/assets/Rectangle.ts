@@ -26,11 +26,11 @@ export class RectangleAsset extends CollidableAsset {
 
   public id = 'RectangleAsset'
 
-  private moveSpeed = 500 // per second
+  private readonly moveSpeed = 500 // per second
 
   private kbController!: KeyboardController
 
-  private moveKeys: RectangleMoveKeys
+  private readonly moveKeys: RectangleMoveKeys
 
   constructor(moveKeys: RectangleMoveKeys) {
     super(new RectangleTexture())
