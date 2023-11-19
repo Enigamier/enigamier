@@ -30,14 +30,14 @@ export class Enigamier {
     this.initCanvas(canvasId)
     this.options = this.mergeDefaultOptions(options)
     console.log(this.options)
-    this.renderer = new Renderer()
+    this.renderer = new Renderer(this.onRender.bind(this), this.onUpdate.bind(this))
     this.globalController = new GlobalController(this.canvas)
     this.globalController.init()
   }
 
   public start(id: string) {
     this.loadScene(id)
-    this.renderer.start(this.onRender.bind(this), this.onUpdate.bind(this))
+    this.renderer.start()
   }
 
   public shutdown() {
@@ -98,10 +98,10 @@ export class Enigamier {
     this.canvasContext.clearRect(0, 0, this.canvas.width, this.canvas.height)
   }
 
-  private onUpdate() {
+  private onUpdate(delta: number) {
     if (this.currentScene) {
       const assets = this.currentScene.assetsList
-      assets.forEach(asset => asset.update())
+      assets.forEach(asset => asset.update(delta))
       checkCollisions(assets.filter(asset => asset instanceof CollidableAsset) as CollidableAsset[])
     }
   }

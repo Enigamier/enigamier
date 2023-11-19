@@ -4,7 +4,7 @@ import { RectangleAsset } from '../assets/Rectangle'
 import { Button } from '../assets/Button'
 
 export class ExampleScene extends Scene {
-  public readonly id = 'MainMenu'
+  public readonly id = 'Example'
 
   public load(context: SceneContext): void {
     const { enigamier: { canvas } } = context

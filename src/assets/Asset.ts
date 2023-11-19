@@ -50,7 +50,7 @@ export abstract class Asset {
     this.abortController.abort()
   }
 
-  public abstract update(): void
+  public abstract update(delta: number): void
 
   protected move() {
     const { angle, distance } = this.movement

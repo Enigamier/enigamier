@@ -26,7 +26,7 @@ export class RectangleAsset extends CollidableAsset {
 
   public id = 'RectangleAsset'
 
-  private moveSpeed = 10
+  private moveSpeed = 500 // per second
 
   private kbController!: KeyboardController
 
@@ -48,7 +48,7 @@ export class RectangleAsset extends CollidableAsset {
     mouseController.addEventListener('click', this.onCanvasClick.bind(this), this.abortController.signal)
   }
 
-  public update(): void {
+  public update(delta: number): void {
     const areArrowsPressed = Object.keys(this.kbController.inputs).some(key => this.moveKeysCodesMap[key])
 
     if (areArrowsPressed) {
@@ -58,7 +58,7 @@ export class RectangleAsset extends CollidableAsset {
       const relativeY = 0 + (isUp ? -1 : 0) + (isDown ? 1 : 0)
       if (relativeX || relativeY) {
         this.movement = {
-          distance: this.moveSpeed,
+          distance: this.moveSpeed * (delta / 1000),
           angle: Math.atan2(relativeY, relativeX),
         }
         this.move()
