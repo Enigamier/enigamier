@@ -1,5 +1,5 @@
 import type { AssetContext, KeyboardController, MouseController, MouseEventPayload } from '@/index'
-import { AssetCollidable, Texture } from '@/index'
+import { CollidableAsset, Texture } from '@/index'
 
 class RectangleTexture extends Texture {
 
@@ -21,7 +21,7 @@ interface RectangleMoveKeys {
   left: string;
 }
 
-export class RectangleAsset extends AssetCollidable {
+export class RectangleAsset extends CollidableAsset {
   declare public texture: RectangleTexture
 
   public id = 'RectangleAsset'

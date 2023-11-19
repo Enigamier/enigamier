@@ -1,9 +1,10 @@
 import { Controller } from './Controller'
 
 export interface MouseEventPayload {
-  button: number;
   x: number;
   y: number;
+  elem: HTMLElement;
+  button?: number;
 }
 
 export class MouseController extends Controller<MouseEvent, MouseEventPayload> {
@@ -12,16 +13,18 @@ export class MouseController extends Controller<MouseEvent, MouseEventPayload> {
   public inputs: Record<number, true> = {}
 
   public install(element: HTMLCanvasElement) {
-    const callback = this.onMouseEvent.bind(this)
+    const buttonCallback = this.onMouseButtonEvent.bind(this)
+    const moveCallback = this.onMouseMoveEvent.bind(this)
     return [
-      { element, event: 'mousedown', callback },
-      { element, event: 'mouseup', callback },
-      { element, event: 'click', callback },
+      { element, event: 'mousedown', callback: buttonCallback },
+      { element, event: 'mouseup', callback: buttonCallback },
+      { element, event: 'click', callback: buttonCallback },
+      { element, event: 'mousemove', callback: moveCallback },
       { element, event: 'contextmenu', callback: () => false },
     ]
   }
 
-  private onMouseEvent(event: MouseEvent) {
+  private onMouseButtonEvent(event: MouseEvent) {
     const { button, type } = event
     if (type === 'mousedown') {
       this.inputs = { ...this.inputs, [button]: true }
@@ -29,9 +32,21 @@ export class MouseController extends Controller<MouseEvent, MouseEventPayload> {
       delete this.inputs[button]
     }
     this.fireEvent(type, {
-      button,
       x: event.offsetX,
       y: event.offsetY,
+      button,
+      elem: event.target as HTMLElement,
+    })
+  }
+
+  private onMouseMoveEvent(event: MouseEvent) {
+    const { offsetX, offsetY } = event
+    const elem = event.target as HTMLElement
+    elem.style.cursor = ''
+    this.fireEvent('mousemove', {
+      x: offsetX,
+      y: offsetY,
+      elem,
     })
   }
 }

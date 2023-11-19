@@ -1,7 +1,7 @@
 import type { Scene } from '@/scenes/Scene'
 import { Renderer } from '@/Renderer'
 import { GlobalController } from '@/controllers/GlobalController'
-import { AssetCollidable } from '@/assets/AssetCollidable'
+import { CollidableAsset } from '@/assets/CollidableAsset'
 
 import { checkCollisions } from './collide'
 
@@ -103,7 +103,7 @@ export class Enigamier {
     if (this.currentScene) {
       const assets = this.currentScene.assetsList
       assets.forEach(asset => asset.update())
-      checkCollisions(assets.filter(asset => asset instanceof AssetCollidable) as AssetCollidable[])
+      checkCollisions(assets.filter(asset => asset instanceof CollidableAsset) as CollidableAsset[])
     }
   }
 

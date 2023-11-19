@@ -1,4 +1,4 @@
-import { DogePongGame } from '@/games/DogePong'
+import { DogePongGame } from '@/games/DogePong/DogePong'
 
 import './index.css'
 

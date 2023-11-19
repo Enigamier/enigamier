@@ -1,7 +1,7 @@
-import type { AssetCollidable, AssetHitbox } from '@/assets/AssetCollidable'
-import type { TextureScope } from '@/textures/Texture'
+import type { CollidableAsset } from '@/assets/CollidableAsset'
+import type { AssetCoords } from '@/assets/Asset'
 
-function areRectanglesOverlapping(rect1: TextureScope, rect2: TextureScope): boolean {
+function areRectanglesOverlapping(rect1: AssetCoords, rect2: AssetCoords): boolean {
   return (
     rect1.startX < rect2.endX &&
     rect1.endX > rect2.startX &&
@@ -10,31 +10,15 @@ function areRectanglesOverlapping(rect1: TextureScope, rect2: TextureScope): boo
   )
 }
 
-function getAssetGlobalHitbox(asset: AssetCollidable): AssetHitbox {
-  const txt = asset.texture
-  return {
-    startX: txt.scope.startX + txt.position.x + asset.hitbox.startX,
-    startY: txt.scope.startY + txt.position.y + asset.hitbox.startY,
-    endX: txt.scope.startX + txt.position.x + txt.size.width + asset.hitbox.endX,
-    endY: txt.scope.startY + txt.position.y + txt.size.height + asset.hitbox.endY,
-  }
-}
-
-function areHitboxesOverlapping(asset1: AssetCollidable, asset2: AssetCollidable) {
-  const globalHb1 = getAssetGlobalHitbox(asset1)
-  const globalHb2 = getAssetGlobalHitbox(asset2)
-  return areRectanglesOverlapping(globalHb1, globalHb2)
-}
-
-export function checkCollisions(assets: AssetCollidable[]) {
+export function checkCollisions(assets: CollidableAsset[]) {
   assets.forEach((asset1, index) => {
-    const currentScope = asset1.texture.scope
+    const scope1 = asset1.texture.scope
     for (let collideI = index + 1; collideI < assets.length; collideI++) {
       const asset2 = assets[collideI]
-      const { texture: { scope: checkingScope } } = asset2
+      const { texture: { scope: scope2 } } = asset2
       if (
-        areRectanglesOverlapping(currentScope, checkingScope) &&
-        areHitboxesOverlapping(asset1, asset2)
+        areRectanglesOverlapping(scope1, scope2) &&
+        areRectanglesOverlapping(asset1.globalHitbox, asset2.globalHitbox)
       ) {
         asset1.onCollide && asset1.onCollide(asset2)
         asset2.onCollide && asset2.onCollide(asset1)
