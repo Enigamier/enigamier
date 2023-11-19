@@ -3,7 +3,7 @@ import { Scene } from '@/index'
 import { RectangleAsset } from '../assets/Rectangle'
 import { Button } from '../assets/Button'
 
-export class MainMenuScene extends Scene {
+export class ExampleScene extends Scene {
   public readonly id = 'MainMenu'
 
   public load(context: SceneContext): void {

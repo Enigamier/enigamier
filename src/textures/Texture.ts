@@ -1,8 +1,8 @@
-interface TexturePosition {
+export interface TexturePosition {
   x: number; y: number;
 }
 
-interface TextureSize {
+export interface TextureSize {
   width: number; height: number;
 }
 

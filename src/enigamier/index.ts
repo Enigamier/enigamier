@@ -35,9 +35,8 @@ export class Enigamier {
     this.globalController.init()
   }
 
-  public start(scene: Scene) {
-    this.registerScene(scene)
-    this.loadScene(scene.id)
+  public start(id: string) {
+    this.loadScene(id)
     this.renderer.start(this.onRender.bind(this), this.onUpdate.bind(this))
   }
 
@@ -54,7 +53,7 @@ export class Enigamier {
   public loadScene(id: string) {
     this.unloadCurrentScene()
     const newScene = this.scenes[id]
-    newScene.load({ enigamier: this, gc: this.globalController })
+    newScene.load({ enigamier: this, gc: this.globalController, canvasContext: this.canvasContext })
     this.currentScene = newScene
   }
 
@@ -110,11 +109,7 @@ export class Enigamier {
   private onRender() {
     if (this.currentScene) {
       this.clearCanvas()
-      this.currentScene.sortedAssetsByTexture.forEach(asset => {
-        this.canvasContext.save()
-        asset.texture.render(this.canvasContext)
-        this.canvasContext.restore()
-      })
+      this.currentScene.render()
     }
   }
 }

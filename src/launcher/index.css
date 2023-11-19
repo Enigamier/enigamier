@@ -59,7 +59,7 @@ body {
 }
 
 .game-canvas-wrapper {
-  border: 2px solid whitesmoke;
+  border: 8px solid darkcyan;
 }
 
 .game-canvas {
