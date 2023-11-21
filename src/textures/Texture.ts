@@ -27,8 +27,8 @@ export abstract class Texture {
     return { x: Math.round(x + width / 2), y: Math.round(y + height / 2) }
   }
 
-  public render(cxt: CanvasRenderingContext2D) {
+  public render(ctx: CanvasRenderingContext2D) {
     const { startX, startY } = this.scope
-    cxt.translate(startX, startY)
+    ctx.translate(startX, startY)
   }
 }

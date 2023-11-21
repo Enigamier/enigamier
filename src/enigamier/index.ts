@@ -1,9 +1,6 @@
 import type { Scene } from '@/scenes/Scene'
 import { Renderer } from '@/Renderer'
 import { GlobalController } from '@/controllers/GlobalController'
-import { CollidableAsset } from '@/assets/CollidableAsset'
-
-import { checkCollisions } from './collide'
 
 interface EnigamierOptions {
   autoResize: boolean;
@@ -99,11 +96,7 @@ export class Enigamier {
   }
 
   private onUpdate(delta: number) {
-    if (this.currentScene) {
-      const assets = this.currentScene.assetsList
-      assets.forEach(asset => asset.update(delta))
-      checkCollisions(assets.filter(asset => asset instanceof CollidableAsset) as CollidableAsset[])
-    }
+    this.currentScene?.update(delta)
   }
 
   private onRender() {

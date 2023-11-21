@@ -1,5 +1,6 @@
 import type { Asset, AssetContext } from '@/assets/Asset'
-import type { Enigamier, GlobalController, Texture } from '@/index'
+import { checkCollisions } from '@/enigamier/collide'
+import { CollidableAsset, type Enigamier, type GlobalController, type Texture } from '@/index'
 
 export interface SceneContext {
   enigamier: Enigamier;
@@ -22,6 +23,10 @@ export abstract class Scene {
     return Object.values(this.assets)
   }
 
+  public get collidableAssetsList() {
+    return this.assetsList.filter(asset => asset instanceof CollidableAsset) as CollidableAsset[]
+  }
+
   private get sortedAssetsByTexture(): Asset[] {
     return this.assetsList.sort((assetA, assetB) => assetA.texture.index - assetB.texture.index)
   }
@@ -39,8 +44,13 @@ export abstract class Scene {
     this.loaded = false
   }
 
+  public update(delta: number) {
+    this.updateAssets(delta)
+    checkCollisions(this.collidableAssetsList)
+  }
+
   public render() {
-    this.bgTexture?.render(this.context.canvasContext)
+    this.renderBgTexture()
     this.sortedAssetsByTexture.forEach(this.renderAsset.bind(this))
   }
 
@@ -52,6 +62,19 @@ export abstract class Scene {
   protected removeAsset(asset: Asset) {
     asset.unload()
     delete this.assets[asset.id]
+  }
+
+  protected updateAssets(delta: number) {
+    this.assetsList.forEach(asset => asset.update(delta))
+  }
+
+  protected renderBgTexture() {
+    if (this.bgTexture) {
+      const { canvasContext: ctx } = this.context
+      ctx.save()
+      this.bgTexture?.render(this.context.canvasContext)
+      ctx.restore()
+    }
   }
 
   private renderAsset(asset: Asset) {

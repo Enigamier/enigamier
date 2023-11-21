@@ -3,12 +3,24 @@ import { MenuScene } from '../Menu'
 import { Button } from '../../assets/Button'
 import { Text } from '../../assets/Text'
 import { ControlsAsset } from './assets/Controls'
+import { MenuBackgroundTexture } from '../../textures/MenuBackground'
+
+const targetDogeRotation = Math.PI * 4
+const targetDogeSize = .05
+const targetDogeOffset = { x: 0, y: 0.055 }
+const playTransitionTime = 2000
 
 export class ControlsMenuScene extends MenuScene {
   public readonly id = 'ControlsMenu'
 
+  private playTransition = false
+
+  private playTransitionElapsedTime = 0
+
   public load(ctx: SceneContext): void {
     const { width, height } = ctx.enigamier.canvas
+
+    this.bgTexture = new MenuBackgroundTexture()
 
     // Title
     const dogeText = new Text(width * .05, height * .07, 'DOGE')
@@ -20,7 +32,11 @@ export class ControlsMenuScene extends MenuScene {
 
     // Buttons
     const playButtonWidth = width * .16
-    const playButton = new Button((width * .5) - (playButtonWidth / 2), height * .75, () => console.log('Play!!'))
+    const playButton = new Button((width * .5) - (playButtonWidth / 2), height * .75, () => {
+      this.playTransition = true
+      this.removeAsset(playButton)
+      this.removeAsset(backButton)
+    })
     playButton.texture.size = { width: playButtonWidth, height: height * .07 }
     playButton.texture.text = 'Let\'s play!!'
     const backButton = new Button(width * .05, height * .87, () => this.context.enigamier.loadScene('MainMenu'))
@@ -43,5 +59,36 @@ export class ControlsMenuScene extends MenuScene {
     this.addAsset(player1Controls)
     this.addAsset(player2Controls)
     super.load(ctx)
+  }
+
+  public update(delta: number): void {
+    this.updateBgTexture(delta)
+    this.updateAssets(delta)
+  }
+
+  private onPlayTransitionEnds() {
+    this.playTransition = false
+    this.playTransitionElapsedTime = 0
+    this.context.enigamier.loadScene('Battleground')
+  }
+
+  private updateBgTexture(frameDelay: number) {
+    if (this.playTransition) {
+      const remainingTime = playTransitionTime - this.playTransitionElapsedTime
+      if (remainingTime > 0) {
+        const delta = Math.min(remainingTime, frameDelay)
+        const relativeDelta = delta / playTransitionTime
+        const { dogeOffset } = this.bgTexture
+        this.bgTexture.dogeRotation += targetDogeRotation * relativeDelta
+        this.bgTexture.dogeSize -= (.45 - targetDogeSize) * relativeDelta
+        this.bgTexture.dogeOffset = {
+          x: dogeOffset.x + targetDogeOffset.x * relativeDelta,
+          y: dogeOffset.y + targetDogeOffset.y * relativeDelta,
+        }
+        this.playTransitionElapsedTime += delta
+      } else {
+        this.onPlayTransitionEnds()
+      }
+    }
   }
 }
