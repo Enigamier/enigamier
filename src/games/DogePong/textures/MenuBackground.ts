@@ -6,7 +6,7 @@ import dogeImage from '../imgs/doge_disk.png'
 export class MenuBackgroundTexture extends Texture {
   private readonly img: HTMLImageElement
 
-  public dogeRotation = Math.PI
+  public dogeRotation = 0
 
   public dogeSize = .45
 

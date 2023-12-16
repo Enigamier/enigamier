@@ -1,6 +1,7 @@
 import type { TextureSize } from '@/index'
-import { Asset, Texture } from '@/index'
+import { CollidableAsset, Texture } from '@/index'
 
+import type { PlayerBarAsset } from './PlayerBar'
 import dogeImage from '../../../imgs/doge_disk49.png'
 
 class DogeBallTexture extends Texture {
@@ -39,26 +40,93 @@ class DogeBallTexture extends Texture {
   }
 }
 
-export class DogeBallAsset extends Asset {
+const initialSpeed = 500
+const initialRotation = 0
+
+function getAngleAfterCollide(angle: number, axis: 'x' | 'y') {
+  return -angle + (axis === 'y' ? Math.PI : 0)
+}
+
+// Translate any angle into a equivalent positive angle from 0 to 2 * PI
+function normalizeAngle(angle: number): number {
+  return Math.abs((angle + Math.PI * 2) % (Math.PI * 2))
+}
+
+function getInitialAngle() {
+  const angleAmmount = Math.random() * Math.PI / 4
+  return angleAmmount + (Math.floor(Math.random() * 4) * Math.PI / 2) + Math.PI / 8
+}
+
+export type ScoreCallback = (player: 1 | 2) => void
+
+export class DogeBallAsset extends CollidableAsset {
   declare public texture: DogeBallTexture
 
   public readonly id = 'DogeBall'
 
-  constructor() {
+  public rotationSpeed = 0
+
+  private readonly onScore: ScoreCallback
+
+  constructor(onScore: ScoreCallback) {
     super(new DogeBallTexture())
+    this.onScore = onScore
   }
 
-  public update(): void {
+  public start() {
+    this.movement = { speed: initialSpeed, angle: getInitialAngle() }
+  }
 
-    // const relativeX = 0 + (isLeft ? -1 : 0) + (isRight ? 1 : 0)
-    // const relativeY = 0 + (isUp ? -1 : 0) + (isDown ? 1 : 0)
-    // if (relativeX || relativeY) {
-    //   this.movement = {
-    //     distance: this.moveSpeed * (delta / 1000),
-    //     angle: Math.atan2(relativeY, relativeX),
-    //   }
-    //   this.move()
-    //   this.fixToScope()
-    // }
+  public stop() {
+    this.movement = { speed: 0, angle: 0 }
+    this.rotationSpeed = 0
+  }
+
+  public reset() {
+    this.stop()
+    this.texture.rotation = initialRotation
+    const { scope: { startX, startY, endX, endY }, size: { width, height } } = this.texture
+    this.texture.position = {
+      x: (endX - startX) / 2 - width / 2,
+      y: (endY - startY) / 2 - height / 2,
+    }
+  }
+
+  public update(delta: number): void {
+    this.checkScopeCollide()
+    this.texture.rotation += this.rotationSpeed * (delta / 1000)
+    this.move(delta)
+  }
+
+  public onCollide(barAsset: PlayerBarAsset): void {
+    const { startX: ballStartX, endX: ballEndX } = this.globalHitbox
+    const { startX: barStartX, endX: barEndX } = barAsset.globalHitbox
+    const { y: ballCenterY } = this.texture.centerPoint
+    const { y: barCenterY } = barAsset.texture.centerPoint
+    const { height: barHeight } = barAsset.texture.size
+    const offsetY = ballCenterY - barCenterY
+
+    if (Math.abs(offsetY) <= barHeight / 2) {
+      const newAngle = normalizeAngle(getAngleAfterCollide(this.movement.angle, 'y'))
+      this.movement.angle = newAngle
+
+      const offsetX = barAsset.id === 'Player1Bar' ? barEndX - ballStartX : barStartX - ballEndX
+      this.texture.position.x += offsetX
+    }
+  }
+
+  private checkScopeCollide() {
+    if (this.movement.speed) {
+      const { startX: ballStartX, startY: ballStartY, endX: ballEndX, endY: ballEndY } = this.globalHitbox
+      const { startX: scopeStartX, startY: scopeStartY, endX: scopeEndX, endY: scopeEndY } = this.texture.scope
+
+      if (ballStartY < scopeStartY || ballEndY > scopeEndY) {
+        this.movement.angle = getAngleAfterCollide(this.movement.angle, 'x')
+      } else if (ballStartX < scopeStartX) {
+        this.onScore(1)
+      } else if (ballEndX > scopeEndX) {
+        this.onScore(2)
+      }
+    }
   }
 }

@@ -6,7 +6,7 @@ export interface AssetContext {
 
 export interface AssetMovement {
   angle: number;
-  distance: number;
+  speed: number;
 }
 
 export interface AssetCoords {
@@ -21,7 +21,7 @@ export abstract class Asset {
 
   public texture: Texture
 
-  protected movement: AssetMovement = { angle: 0, distance: 0 }
+  protected movement: AssetMovement = { angle: 0, speed: 0 }
 
   protected context!: AssetContext
 
@@ -52,13 +52,14 @@ export abstract class Asset {
 
   public abstract update(delta: number): void
 
-  protected move() {
-    const { angle, distance } = this.movement
-    if (distance > 0) {
+  protected move(delta: number) {
+    const { angle, speed } = this.movement
+    if (speed > 0) {
       const { x, y } = this.texture.position
+      const distance = speed * (delta / 1000)
       this.texture.position = {
-        x: x + Math.round(Math.cos(angle) * distance),
-        y: y + Math.round(Math.sin(angle) * distance),
+        x: x + Math.cos(angle) * distance,
+        y: y - Math.sin(angle) * distance,
       }
     }
   }

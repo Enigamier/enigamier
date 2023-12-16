@@ -34,7 +34,7 @@ export class BattlegroundScene extends Scene {
     player1BarAsset.texture.scope = {
       startX: playerBarsScopeOffsetX,
       startY: scoreBarHeight,
-      endX: playerBarsSize.width,
+      endX: playerBarsScopeOffsetX + playerBarsSize.width,
       endY: height,
     }
 
@@ -50,30 +50,66 @@ export class BattlegroundScene extends Scene {
 
     // DogeBall
     const dogeBallSize = width * 0.05
-    const dogeBallAsset = new DogeBallAsset()
-    dogeBallAsset.texture.position = {
-      x: width / 2 - dogeBallSize / 2,
-      y: (height - scoreBarHeight) / 2 - dogeBallSize / 2,
-    }
-    dogeBallAsset.texture.size = { width: dogeBallSize, height: dogeBallSize }
-    dogeBallAsset.texture.scope = {
-      startX: 0,
+    const dogeBallScope = {
+      startX: player1BarAsset.texture.scope.endX,
       startY: scoreBarHeight,
-      endX: width,
+      endX: player2BarAsset.texture.scope.startX,
       endY: height,
     }
+    const dogeBallAsset = new DogeBallAsset(this.onScore.bind(this))
+    dogeBallAsset.texture.size = { width: dogeBallSize, height: dogeBallSize }
+    dogeBallAsset.texture.scope = dogeBallScope
+    dogeBallAsset.reset()
+
+    // Ball buttons
+    const ballButtonsSize = { width: width * .06, height: height * .05 }
+    const ballStartButton = new Button(width * .1, height * .025, () => dogeBallAsset.start())
+    ballStartButton.texture.size = ballButtonsSize
+    ballStartButton.texture.text = 'Start'
+    const ballResetButton = new Button(width * .17, height * .025, () => {
+      dogeBallAsset.reset()
+    })
+    ballResetButton.texture.size = ballButtonsSize
+    ballResetButton.texture.text = 'Reset'
 
     this.addAsset(scoreBarAsset)
     this.addAsset(backButton)
     this.addAsset(player1BarAsset)
     this.addAsset(player2BarAsset)
     this.addAsset(dogeBallAsset)
+    this.addAsset(ballStartButton)
+    this.addAsset(ballResetButton)
     super.load(context)
   }
 
   protected renderBgTexture(): void {
     const { canvasContext: ctx, enigamier: { canvas: { width, height } } } = this.context
+    const dottedLinesOffset = width * .032
+
+    ctx.save()
+
     ctx.fillStyle = 'silver'
     ctx.fillRect(0, 0, width, height)
+
+    ctx.lineWidth = width * 0.0015
+    ctx.setLineDash([width * 0.01])
+    ctx.strokeStyle = 'rgba(255, 0, 0, 0.3)'
+    ctx.beginPath()
+    ctx.moveTo(dottedLinesOffset, 0)
+    ctx.lineTo(dottedLinesOffset, height)
+    ctx.stroke()
+    ctx.beginPath()
+    ctx.strokeStyle = 'rgba(0, 0, 255, 0.3)'
+    ctx.moveTo(width - dottedLinesOffset, 0)
+    ctx.lineTo(width - dottedLinesOffset, height)
+    ctx.stroke()
+
+    ctx.restore()
+  }
+
+  private onScore(player: 1 | 2) {
+    const ballAsset = this.assets.DogeBall as DogeBallAsset
+    ballAsset.stop()
+    console.log(player)
   }
 }

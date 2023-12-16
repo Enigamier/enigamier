@@ -1,4 +1,4 @@
-import type { AssetContext, KeyboardController, TextureSize } from '@/index'
+import type { AssetContext, AssetMovement, KeyboardController, TextureSize } from '@/index'
 import { CollidableAsset, Texture } from '@/index'
 
 class PlayerBarTexture extends Texture {
@@ -64,6 +64,8 @@ export class PlayerBarAsset extends CollidableAsset {
 
   private kbController!: KeyboardController
 
+  protected movement: AssetMovement = { speed: moveSpeed, angle: 0 }
+
   constructor(id: string, orientation: 'left' | 'right', moveKeys: PlayerBarMoveKeys) {
     super(new PlayerBarTexture())
     this.id = id
@@ -84,19 +86,10 @@ export class PlayerBarAsset extends CollidableAsset {
     const areMoveKeysPressed = Object.keys(this.kbController.inputs).some(key => this.moveKeysCodesMap[key])
 
     if (areMoveKeysPressed) {
-      const { up } = this.moveKeys
-      const { [up]: isUp } = this.kbController.inputs
-      const relativeY = isUp ? -.5 : .5
-      if (relativeY) {
-        this.movement = {
-          distance: moveSpeed * (delta / 1000),
-          angle: Math.PI * relativeY,
-        }
-        this.move()
-        this.fixToScope()
-      }
-    } else {
-      this.movement.distance = 0
+      const { [this.moveKeys.up]: isUp } = this.kbController.inputs
+      this.movement.angle = Math.PI * (isUp ? .5 : -.5)
+      this.move(delta)
+      this.fixToScope()
     }
   }
 }

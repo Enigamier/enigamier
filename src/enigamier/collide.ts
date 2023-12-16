@@ -3,10 +3,10 @@ import type { AssetCoords } from '@/assets/Asset'
 
 function areRectanglesOverlapping(rect1: AssetCoords, rect2: AssetCoords): boolean {
   return (
-    rect1.startX < rect2.endX &&
-    rect1.endX > rect2.startX &&
-    rect1.startY < rect2.endY &&
-    rect1.endY > rect2.startY
+    rect1.startX <= rect2.endX &&
+    rect1.endX >= rect2.startX &&
+    rect1.startY <= rect2.endY &&
+    rect1.endY >= rect2.startY
   )
 }
 

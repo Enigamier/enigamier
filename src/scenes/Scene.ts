@@ -15,7 +15,7 @@ export abstract class Scene {
 
   private loaded = false
 
-  private assets: Record<string, Asset> = {}
+  protected assets: Record<string, Asset> = {}
 
   protected bgTexture?: Texture
 

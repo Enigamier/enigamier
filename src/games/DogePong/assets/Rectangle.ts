@@ -1,4 +1,4 @@
-import type { AssetContext, KeyboardController, MouseController, MouseEventPayload } from '@/index'
+import type { AssetContext, AssetMovement, KeyboardController, MouseController, MouseEventPayload } from '@/index'
 import { CollidableAsset, Texture } from '@/index'
 
 class RectangleTexture extends Texture {
@@ -26,7 +26,7 @@ export class RectangleAsset extends CollidableAsset {
 
   public id = 'RectangleAsset'
 
-  private readonly moveSpeed = 500 // per second
+  protected movement: AssetMovement = { speed: 500, angle: 0 }
 
   private kbController!: KeyboardController
 
@@ -57,15 +57,10 @@ export class RectangleAsset extends CollidableAsset {
       const relativeX = 0 + (isLeft ? -1 : 0) + (isRight ? 1 : 0)
       const relativeY = 0 + (isUp ? -1 : 0) + (isDown ? 1 : 0)
       if (relativeX || relativeY) {
-        this.movement = {
-          distance: this.moveSpeed * (delta / 1000),
-          angle: Math.atan2(relativeY, relativeX),
-        }
-        this.move()
+        this.movement.angle = Math.atan2(relativeY, relativeX)
+        this.move(delta)
         this.fixToScope()
       }
-    } else {
-      this.movement.distance = 0
     }
   }
 
