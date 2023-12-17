@@ -26,7 +26,7 @@ export class RectangleAsset extends CollidableAsset {
 
   public id = 'RectangleAsset'
 
-  protected movement: AssetMovement = { speed: 500, angle: 0 }
+  public movement: AssetMovement = { speed: 500, angle: 0 }
 
   private kbController!: KeyboardController
 

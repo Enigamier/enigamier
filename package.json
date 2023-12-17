@@ -1,7 +1,7 @@
 {
   "name": "enigamier",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "files": [
     "dist"
@@ -22,8 +22,10 @@
     "start": "vite",
     "dev": "npm start",
     "build": "tsc && vite build",
+    "build-launcher": "tsc && vite build -c vite-launcher.config.ts",
     "lint": "eslint . --max-warnings 0",
     "preview": "vite preview",
+    "preview-launcher": "vite preview -c vite-launcher.config.ts",
     "test": "vitest run",
     "test:watch": "vitest watch",
     "prepare": "husky install"

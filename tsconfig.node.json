@@ -7,5 +7,5 @@
     "resolveJsonModule": true,
     "strictNullChecks": true,
   },
-  "include": ["vite.config.ts", "package.json", ".eslintrc.cjs", "vitest.setup.ts"],
+  "include": ["vite.config.ts", "vite-launcher.config.ts", "package.json", ".eslintrc.cjs", "vitest.setup.ts"],
 }
