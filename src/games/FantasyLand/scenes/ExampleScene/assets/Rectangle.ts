@@ -55,7 +55,7 @@ export class RectangleAsset extends CollidableAsset {
       const { up, down, left, right } = this.moveKeys
       const { [up]: isUp, [down]: isDown, [left]: isLeft, [right]: isRight } = this.kbController.inputs
       const relativeX = 0 + (isLeft ? -1 : 0) + (isRight ? 1 : 0)
-      const relativeY = 0 + (isUp ? -1 : 0) + (isDown ? 1 : 0)
+      const relativeY = 0 + (isUp ? 1 : 0) + (isDown ? -1 : 0)
       if (relativeX || relativeY) {
         this.movement.angle = Math.atan2(relativeY, relativeX)
         this.move(delta)

@@ -1,16 +1,12 @@
 import type { SceneContext } from '@/index'
 import { Scene } from '@/index'
-import { RectangleAsset } from '../assets/Rectangle'
-import { Button } from '../assets/Button'
+import { RectangleAsset } from './assets/Rectangle'
 
 export class ExampleScene extends Scene {
   public readonly id = 'Example'
 
   public load(context: SceneContext): void {
     const { enigamier: { canvas } } = context
-    const button1 = new Button(300, 50, () => this.removeAsset(firstRectangleAsset))
-    button1.isDisabled = true
-    const button2 = new Button(500, 50, () => this.removeAsset(secondRectangleAsset))
     const rectanglesScope = {
       startX: 0,
       startY: 0,
@@ -35,8 +31,6 @@ export class ExampleScene extends Scene {
     secondRectangleAsset.texture.position = { x: 300, y: 200 }
     secondRectangleAsset.texture.color = 'pink'
     secondRectangleAsset.texture.scope = rectanglesScope
-    this.addAsset(button1)
-    this.addAsset(button2)
     this.addAsset(firstRectangleAsset)
     this.addAsset(secondRectangleAsset)
     super.load(context)

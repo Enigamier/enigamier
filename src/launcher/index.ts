@@ -1,8 +1,9 @@
-import { dogePongGame } from '@/games/DogePong/DogePong'
+import { dogePongGame } from '@/games/DogePong'
+import { fantasyLandGame } from '@/games/FantasyLand'
 
 import './index.css'
 
-const games: Record<string, (canvasId: string) => void> = { dogePong: dogePongGame }
+const games: Record<string, (canvasId: string) => void> = { dogePong: dogePongGame, fantasyLand: fantasyLandGame }
 const gameButtonsTemplate = Object.keys(games).map(gameId => `
   <button class="button" data-game-id="${gameId}">${gameId}</button>
 `)
