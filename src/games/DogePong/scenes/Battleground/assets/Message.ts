@@ -18,7 +18,7 @@ class MessageTexture extends Texture {
 
       const { startX, startY, endX, endY } = this.scope
       const maxWidth = (endX - startX) / 2
-      const padding = this.fontSize
+      const padding = this.fontSize * .75
       const lineHeight = this.fontSize * this.lineHeightRel
       const font = `bold ${this.fontSize}px Comic Sans MS`
       ctx.font = font

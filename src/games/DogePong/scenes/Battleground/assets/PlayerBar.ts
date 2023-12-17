@@ -92,4 +92,12 @@ export class PlayerBarAsset extends CollidableAsset {
       this.fixToScope()
     }
   }
+
+  public freeze() {
+    this.movement.speed = 0
+  }
+
+  public enable() {
+    this.movement.speed = moveSpeed
+  }
 }

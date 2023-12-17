@@ -75,17 +75,6 @@ export class BattlegroundScene extends Scene {
     dogeBallAsset.texture.scope = dogeBallScope
     dogeBallAsset.reset()
 
-    // Ball buttons
-    const ballButtonsSize = { width: width * .06, height: height * .05 }
-    const ballStartButton = new Button(width * .1, height * .025, () => dogeBallAsset.start())
-    ballStartButton.texture.size = ballButtonsSize
-    ballStartButton.texture.text = 'Start'
-    const ballResetButton = new Button(width * .17, height * .025, () => {
-      dogeBallAsset.reset()
-    })
-    ballResetButton.texture.size = ballButtonsSize
-    ballResetButton.texture.text = 'Reset'
-
     // Message
     const messageAsset = new MessageAsset()
     messageAsset.texture.scope = {
@@ -99,8 +88,6 @@ export class BattlegroundScene extends Scene {
     this.addAsset(player1BarAsset)
     this.addAsset(player2BarAsset)
     this.addAsset(dogeBallAsset)
-    this.addAsset(ballStartButton)
-    this.addAsset(ballResetButton)
     this.addAsset(messageAsset)
 
     this.startGame()
@@ -134,17 +121,29 @@ export class BattlegroundScene extends Scene {
 
   private async onScore(player: 1 | 2) {
     const ballAsset = this.assets.DogeBall as DogeBallAsset
+    const player1BarAsset = this.assets.Player1Bar as PlayerBarAsset
+    const player2BarAsset = this.assets.Player2Bar as PlayerBarAsset
     const scoreBarAsset = this.assets.ScoreBar as ScoreBarAsset
     ballAsset.stop()
+    player1BarAsset.freeze()
+    player2BarAsset.freeze()
+
     this.scores[player - 1]++
     scoreBarAsset.texture.scores = this.scores
     await this.showScoreMessages(player)
 
     if (this.scores.every(score => score < targetScore)) {
-      this.startGame()
+      this.startNewSet()
     } else {
       this.endGame()
     }
+  }
+
+  private async startGame() {
+    const messageAsset = this.assets.Message as MessageAsset
+    await messageAsset.showMessage('Welcome to a new DogePong match!!!', 3000)
+    await messageAsset.showMessage(`Score ${targetScore} times to win`, 3000)
+    this.startNewSet()
   }
 
   private async showScoreMessages(player: 1 | 2) {
@@ -166,10 +165,14 @@ export class BattlegroundScene extends Scene {
     ballAsset.rotationSpeed = difficulty.rotation
   }
 
-  private async startGame() {
+  private async startNewSet() {
     const messageAsset = this.assets.Message as MessageAsset
     const ballAsset = this.assets.DogeBall as DogeBallAsset
+    const player1BarAsset = this.assets.Player1Bar as PlayerBarAsset
+    const player2BarAsset = this.assets.Player2Bar as PlayerBarAsset
     ballAsset.reset()
+    player1BarAsset.enable()
+    player2BarAsset.enable()
     await messageAsset.showCountdown(5)
     ballAsset.start()
     this.setDifficulty()
