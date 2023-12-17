@@ -20,7 +20,8 @@ export class Renderer {
   }
 
   public start() {
-    this.render(perfectFpsDelta)
+    this.lastFrameTs = performance.now() - perfectFpsDelta
+    this.rafId = requestAnimationFrame(this.render.bind(this))
   }
 
   public stop() {

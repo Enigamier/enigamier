@@ -13,5 +13,5 @@ export function dogePongGame(canvasId: string) {
     new BattlegroundScene(),
   ].forEach(enigamier.registerScene.bind(enigamier))
 
-  enigamier.start('Battleground')
+  enigamier.start('MainMenu')
 }

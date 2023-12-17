@@ -7,9 +7,9 @@ import { PlayerBarAsset } from './assets/PlayerBar'
 import { DogeBallAsset } from './assets/DogeBall'
 import { MessageAsset } from './assets/Message'
 
-const targetScore = 2
+const targetScore = 5
 const initialDifficulty = {
-  speed: 500,
+  speed: 700,
   rotation: Math.PI / 2,
 }
 const maxDifficulty = {

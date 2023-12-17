@@ -41,7 +41,10 @@ class DogeBallTexture extends Texture {
 }
 
 const initialSpeed = 500
-const initialRotationSpeed = Math.PI * 2
+const initialRotationSpeed = Math.PI / 2
+
+const speedIncrementPerCollide = 50
+const rotationSpeedIncrementPerCollide = Math.PI / 12
 
 function getAngleAfterCollide(angle: number, axis: 'x' | 'y') {
   return -angle + (axis === 'y' ? Math.PI : 0)
@@ -113,6 +116,9 @@ export class DogeBallAsset extends CollidableAsset {
 
       const offsetX = barAsset.id === 'Player1Bar' ? barEndX - ballStartX : barStartX - ballEndX
       this.texture.position.x += offsetX
+
+      this.movement.speed += speedIncrementPerCollide
+      this.rotationSpeed += rotationSpeedIncrementPerCollide
     }
   }
 

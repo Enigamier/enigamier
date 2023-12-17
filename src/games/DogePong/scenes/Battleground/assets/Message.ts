@@ -10,6 +10,8 @@ class MessageTexture extends Texture {
 
   public text = ''
 
+  public alpha = 0
+
   public render(ctx: CanvasRenderingContext2D) {
     super.render(ctx)
 
@@ -49,10 +51,12 @@ class MessageTexture extends Texture {
       const startColor = 'red'
       const endColor = 'yellow'
       const fontColor = 'white'
+      const shadowColor = 'black'
       const radius = 10
       const blur = 10
       const offset = 0
 
+      ctx.globalAlpha = this.alpha
       ctx.translate(x, y)
 
       const fillStyle = ctx.createLinearGradient(0, 0, 0, height)
@@ -60,6 +64,7 @@ class MessageTexture extends Texture {
       fillStyle.addColorStop(1, endColor)
       ctx.fillStyle = fillStyle
       ctx.miterLimit = 1
+      ctx.shadowColor = shadowColor
 
       // Squares
       ctx.save()
@@ -80,14 +85,12 @@ class MessageTexture extends Texture {
       ctx.shadowOffsetX = 0
       ctx.shadowOffsetY = 0
       ctx.shadowBlur = blur
-      ctx.shadowColor = 'black'
       ctx.fill()
       ctx.restore()
 
       // Text
       ctx.fillStyle = fontColor
       ctx.shadowBlur = blur / 2
-      ctx.shadowColor = 'black'
       ctx.textAlign = 'center'
       ctx.textBaseline = 'middle'
       ctx.translate(width / 2, padding + (lineHeight / 2))
@@ -101,10 +104,17 @@ class MessageTexture extends Texture {
   }
 }
 
+const fadeAnimation = {
+  in: 200,
+  out: 100,
+}
+
 export class MessageAsset extends Asset {
   declare public texture: MessageTexture
 
   public readonly id = 'Message'
+
+  private fadeState: 'in' | 'out' | undefined
 
   private timeoutId?: NodeJS.Timeout
 
@@ -116,10 +126,15 @@ export class MessageAsset extends Asset {
     if (this.timeoutId) {
       clearTimeout(this.timeoutId)
     }
+    this.fadeState = 'in'
     this.texture.text = text
+    setTimeout(() => {
+      this.fadeState = 'out'
+    }, timeout - fadeAnimation.out)
     return new Promise(resolve => {
       this.timeoutId = setTimeout(() => {
         this.texture.text = ''
+        delete this.fadeState
         delete this.timeoutId
         resolve()
       }, timeout)
@@ -130,6 +145,14 @@ export class MessageAsset extends Asset {
     await this.showMessage(from.toString(), 1000)
     if (from > 1) {
       await this.showCountdown(from - 1)
+    }
+  }
+
+  public update(delta: number): void {
+    if (this.fadeState) {
+      const { alpha } = this.texture
+      const targetAlpha = alpha + (this.fadeState === 'in' ? delta / fadeAnimation.in : -delta / fadeAnimation.out)
+      this.texture.alpha = Math.min(Math.max(targetAlpha, 0), 1)
     }
   }
 }
