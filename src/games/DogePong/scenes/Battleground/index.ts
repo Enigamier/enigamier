@@ -5,12 +5,26 @@ import { ScoreBarAsset } from './assets/ScoreBar'
 import { Button } from '../../assets/Button'
 import { PlayerBarAsset } from './assets/PlayerBar'
 import { DogeBallAsset } from './assets/DogeBall'
+import { MessageAsset } from './assets/Message'
+
+const targetScore = 2
+const initialDifficulty = {
+  speed: 500,
+  rotation: Math.PI / 2,
+}
+const maxDifficulty = {
+  speed: 1500,
+  rotation: Math.PI * 2,
+}
 
 export class BattlegroundScene extends Scene {
   public readonly id = 'Battleground'
 
-  public load(context: SceneContext): void {
+  private scores!: [number, number]
+
+  public load(context: SceneContext) {
     const { width, height } = context.enigamier.canvas
+    this.scores = [0, 0]
 
     // Score Bar
     const scoreBarAsset = new ScoreBarAsset()
@@ -72,6 +86,14 @@ export class BattlegroundScene extends Scene {
     ballResetButton.texture.size = ballButtonsSize
     ballResetButton.texture.text = 'Reset'
 
+    // Message
+    const messageAsset = new MessageAsset()
+    messageAsset.texture.scope = {
+      ...messageAsset.texture.scope,
+      endX: width,
+      endY: height,
+    }
+
     this.addAsset(scoreBarAsset)
     this.addAsset(backButton)
     this.addAsset(player1BarAsset)
@@ -79,6 +101,9 @@ export class BattlegroundScene extends Scene {
     this.addAsset(dogeBallAsset)
     this.addAsset(ballStartButton)
     this.addAsset(ballResetButton)
+    this.addAsset(messageAsset)
+
+    this.startGame()
     super.load(context)
   }
 
@@ -107,9 +132,53 @@ export class BattlegroundScene extends Scene {
     ctx.restore()
   }
 
-  private onScore(player: 1 | 2) {
+  private async onScore(player: 1 | 2) {
     const ballAsset = this.assets.DogeBall as DogeBallAsset
+    const scoreBarAsset = this.assets.ScoreBar as ScoreBarAsset
     ballAsset.stop()
-    console.log(player)
+    this.scores[player - 1]++
+    scoreBarAsset.texture.scores = this.scores
+    await this.showScoreMessages(player)
+
+    if (this.scores.every(score => score < targetScore)) {
+      this.startGame()
+    } else {
+      this.endGame()
+    }
+  }
+
+  private async showScoreMessages(player: 1 | 2) {
+    const messageAsset = this.assets.Message as MessageAsset
+    await messageAsset.showMessage(`GOOOOL!! for Player ${player}`, 3000)
+  }
+
+  private setDifficulty() {
+    const ballAsset = this.assets.DogeBall as DogeBallAsset
+    const steps = (targetScore * 2) - 2
+    const currentScores = this.scores[0] + this.scores[1]
+    const { speed: initialSpeed, rotation: initialRotation } = initialDifficulty
+    const { speed: maxSpeed, rotation: maxRotation } = maxDifficulty
+    const difficulty = {
+      speed: initialSpeed + (((maxSpeed - initialSpeed) / steps) * currentScores),
+      rotation: initialRotation + (((maxRotation - initialRotation) / steps) * currentScores),
+    }
+    ballAsset.movement.speed = difficulty.speed
+    ballAsset.rotationSpeed = difficulty.rotation
+  }
+
+  private async startGame() {
+    const messageAsset = this.assets.Message as MessageAsset
+    const ballAsset = this.assets.DogeBall as DogeBallAsset
+    ballAsset.reset()
+    await messageAsset.showCountdown(5)
+    ballAsset.start()
+    this.setDifficulty()
+  }
+
+  private async endGame() {
+    const winner = this.scores.findIndex(score => score === targetScore) + 1
+    const messageAsset = this.assets.Message as MessageAsset
+    await messageAsset.showMessage(`Player ${winner} wins!!!`, 3000)
+    this.context.enigamier.loadScene('MainMenu')
   }
 }

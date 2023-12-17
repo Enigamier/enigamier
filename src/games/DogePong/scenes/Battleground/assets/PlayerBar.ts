@@ -60,11 +60,11 @@ export class PlayerBarAsset extends CollidableAsset {
 
   public readonly id
 
+  public movement: AssetMovement = { speed: moveSpeed, angle: 0 }
+
   private readonly moveKeys: PlayerBarMoveKeys
 
   private kbController!: KeyboardController
-
-  protected movement: AssetMovement = { speed: moveSpeed, angle: 0 }
 
   constructor(id: string, orientation: 'left' | 'right', moveKeys: PlayerBarMoveKeys) {
     super(new PlayerBarTexture())

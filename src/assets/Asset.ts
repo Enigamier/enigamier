@@ -21,7 +21,7 @@ export abstract class Asset {
 
   public texture: Texture
 
-  protected movement: AssetMovement = { angle: 0, speed: 0 }
+  public movement: AssetMovement = { angle: 0, speed: 0 }
 
   protected context!: AssetContext
 
@@ -50,7 +50,7 @@ export abstract class Asset {
     this.abortController.abort()
   }
 
-  public abstract update(delta: number): void
+  public update?(delta: number): void
 
   protected move(delta: number) {
     const { angle, speed } = this.movement

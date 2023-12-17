@@ -146,8 +146,4 @@ export class ControlsAsset extends Asset {
       startY: y,
     }
   }
-
-  public update(): void {
-    return
-  }
 }

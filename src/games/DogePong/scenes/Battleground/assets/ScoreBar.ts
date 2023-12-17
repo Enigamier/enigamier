@@ -82,8 +82,4 @@ export class ScoreBarAsset extends Asset {
   constructor() {
     super(new ScoreBarTexture())
   }
-
-  public update(): void {
-    return
-  }
 }

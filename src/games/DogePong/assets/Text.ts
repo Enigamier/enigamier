@@ -66,8 +66,4 @@ export class Text extends Asset {
       endY: this.texture.size.height,
     }
   }
-
-  public update(): void {
-    return
-  }
 }

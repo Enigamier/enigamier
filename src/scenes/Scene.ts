@@ -65,7 +65,7 @@ export abstract class Scene {
   }
 
   protected updateAssets(delta: number) {
-    this.assetsList.forEach(asset => asset.update(delta))
+    this.assetsList.forEach(asset => asset.update && asset.update(delta))
   }
 
   protected renderBgTexture() {

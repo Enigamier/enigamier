@@ -21,18 +21,18 @@ class DogeBallTexture extends Texture {
     super.render(ctx)
     const { size: { width, height }, img, rotation } = this
     const { x: centerX, y: centerY } = this.centerPoint
-    const { x, y } = this.position
     const borderWidth = width / 50
     const borderColor = 'black'
 
+    ctx.translate(centerX, centerY)
     ctx.rotate(rotation)
 
     // Image
-    ctx.drawImage(img, x, y, width, height)
+    ctx.drawImage(img, -width / 2, -height / 2, width, height)
 
     // Border
     ctx.beginPath()
-    ctx.arc(centerX, centerY, (width - borderWidth) / 2, 0, Math.PI * 2, false)
+    ctx.arc(0, 0, (width - borderWidth) / 2, 0, Math.PI * 2, false)
     ctx.moveTo(width / -2, 0)
     ctx.strokeStyle = borderColor
     ctx.lineWidth = borderWidth
@@ -41,7 +41,7 @@ class DogeBallTexture extends Texture {
 }
 
 const initialSpeed = 500
-const initialRotation = 0
+const initialRotationSpeed = Math.PI * 2
 
 function getAngleAfterCollide(angle: number, axis: 'x' | 'y') {
   return -angle + (axis === 'y' ? Math.PI : 0)
@@ -64,7 +64,7 @@ export class DogeBallAsset extends CollidableAsset {
 
   public readonly id = 'DogeBall'
 
-  public rotationSpeed = 0
+  public rotationSpeed = initialRotationSpeed
 
   private readonly onScore: ScoreCallback
 
@@ -75,6 +75,7 @@ export class DogeBallAsset extends CollidableAsset {
 
   public start() {
     this.movement = { speed: initialSpeed, angle: getInitialAngle() }
+    this.rotationSpeed = initialRotationSpeed
   }
 
   public stop() {
@@ -84,7 +85,7 @@ export class DogeBallAsset extends CollidableAsset {
 
   public reset() {
     this.stop()
-    this.texture.rotation = initialRotation
+    this.texture.rotation = 0
     const { scope: { startX, startY, endX, endY }, size: { width, height } } = this.texture
     this.texture.position = {
       x: (endX - startX) / 2 - width / 2,
@@ -123,9 +124,9 @@ export class DogeBallAsset extends CollidableAsset {
       if (ballStartY < scopeStartY || ballEndY > scopeEndY) {
         this.movement.angle = getAngleAfterCollide(this.movement.angle, 'x')
       } else if (ballStartX < scopeStartX) {
-        this.onScore(1)
-      } else if (ballEndX > scopeEndX) {
         this.onScore(2)
+      } else if (ballEndX > scopeEndX) {
+        this.onScore(1)
       }
     }
   }
