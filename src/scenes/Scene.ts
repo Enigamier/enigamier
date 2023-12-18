@@ -13,7 +13,7 @@ export abstract class Scene {
 
   protected context!: SceneContext
 
-  private loaded = false
+  protected loaded = false
 
   protected assets: Record<string, Asset> = {}
 
@@ -27,7 +27,7 @@ export abstract class Scene {
     return this.assetsList.filter(asset => asset instanceof CollidableAsset) as CollidableAsset[]
   }
 
-  private get sortedAssetsByTexture(): Asset[] {
+  protected get sortedAssetsByTexture(): Asset[] {
     return this.assetsList.sort((assetA, assetB) => assetA.texture.index - assetB.texture.index)
   }
 
@@ -72,19 +72,19 @@ export abstract class Scene {
     if (this.bgTexture) {
       const { canvasContext: ctx } = this.context
       ctx.save()
-      this.bgTexture?.render(this.context.canvasContext)
+      this.bgTexture.render(this.context.canvasContext)
       ctx.restore()
     }
   }
 
-  private renderAsset(asset: Asset) {
+  protected renderAsset(asset: Asset) {
     const { canvasContext: ctx } = this.context
     ctx.save()
     asset.texture.render(ctx)
     ctx.restore()
   }
 
-  private initBgTexture() {
+  protected initBgTexture() {
     if (this.bgTexture) {
       const { enigamier: { canvas: { width, height } } } = this.context
       const { scope } = this.bgTexture

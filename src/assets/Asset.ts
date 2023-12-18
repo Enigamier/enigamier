@@ -1,7 +1,8 @@
-import type { GlobalController, Texture } from '@/index'
+import type { GlobalController, Texture, CameraInfo } from '@/index'
 
 export interface AssetContext {
   gc: GlobalController;
+  camera?: CameraInfo;
 }
 
 export interface AssetMovement {

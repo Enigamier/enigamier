@@ -1,7 +1,7 @@
 import type { CollidableAsset } from '@/assets/CollidableAsset'
 import type { AssetCoords } from '@/assets/Asset'
 
-function areRectanglesOverlapping(rect1: AssetCoords, rect2: AssetCoords): boolean {
+export function areRectanglesOverlapping(rect1: AssetCoords, rect2: AssetCoords): boolean {
   return (
     rect1.startX <= rect2.endX &&
     rect1.endX >= rect2.startX &&
