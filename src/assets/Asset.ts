@@ -53,6 +53,12 @@ export abstract class Asset {
 
   public update?(delta: number): void
 
+  public render(ctx: CanvasRenderingContext2D): void {
+    ctx.save()
+    this.texture.render(ctx)
+    ctx.restore()
+  }
+
   protected move(delta: number) {
     const { angle, speed } = this.movement
     if (speed > 0) {

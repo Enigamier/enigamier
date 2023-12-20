@@ -78,10 +78,7 @@ export abstract class Scene {
   }
 
   protected renderAsset(asset: Asset) {
-    const { canvasContext: ctx } = this.context
-    ctx.save()
-    asset.texture.render(ctx)
-    ctx.restore()
+    asset.render(this.context.canvasContext)
   }
 
   protected initBgTexture() {
