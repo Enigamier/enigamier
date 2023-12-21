@@ -1,13 +1,14 @@
 import type { SceneContext, TextureSize, TilesMap, TilesAtlas } from '@/index'
 import { ScrollableScene, TileMapAsset } from '@/index'
 
-import atlasImageSrc from './imgs/plains.png'
+import atlasImageSrc from './imgs/terrain.png'
+import worldMapData from './maps/world-map.json'
 import { RectangleAsset } from '../ExampleScene/assets/Rectangle'
 
 const tilesMap: TilesMap = {
-  rows: 2,
-  cols: 2,
-  tileSize: 64,
+  rows: 71,
+  cols: 88,
+  tileSize: 24,
 }
 
 export class WorldScene extends ScrollableScene {
@@ -19,8 +20,6 @@ export class WorldScene extends ScrollableScene {
   }
 
   private readonly tilesAtlas: TilesAtlas
-
-  public tiles = [2, 3, 8, 9]
 
   constructor() {
     super()
@@ -35,8 +34,12 @@ export class WorldScene extends ScrollableScene {
   }
 
   public load(context: SceneContext): void {
-    const tileMapAsset = new TileMapAsset('map', this.tilesAtlas, tilesMap)
-    tileMapAsset.texture.tiles = this.tiles
+    worldMapData.layers.forEach(mapLayer => {
+      const tileMapAsset = new TileMapAsset(`map-layer-${mapLayer.id}`, this.tilesAtlas, tilesMap)
+      tileMapAsset.texture.tiles = mapLayer.data
+      tileMapAsset.texture.index = mapLayer.id
+      this.addAsset(tileMapAsset)
+    })
 
     const { width, height } = this.mapSize
     const rectanglesScope = {
@@ -52,14 +55,16 @@ export class WorldScene extends ScrollableScene {
       right: 'ArrowRight',
     })
     firstRectangleAsset.id = 'Rectangle'
-    firstRectangleAsset.texture.size = { width: 200, height: 200 }
+    firstRectangleAsset.texture.color = 'darkgreen'
+    firstRectangleAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
+    firstRectangleAsset.texture.position = { x: 40 * tilesMap.tileSize, y: 30 * tilesMap.tileSize }
+    firstRectangleAsset.texture.index = 2
+    firstRectangleAsset.movement.speed = 300
     firstRectangleAsset.texture.scope = rectanglesScope
 
-    this.addAsset(tileMapAsset)
+    this.addAsset(firstRectangleAsset)
 
-    // this.addAsset(firstRectangleAsset)
-
-    // this.followAsset('Rectangle')
+    this.followAsset('Rectangle')
     super.load(context)
   }
 }
