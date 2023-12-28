@@ -65,8 +65,8 @@ export abstract class Asset {
       const { x, y } = this.texture.position
       const distance = speed * (delta / 1000)
       this.texture.position = {
-        x: x + Math.cos(angle) * distance,
-        y: y - Math.sin(angle) * distance,
+        x: Math.round(x + Math.cos(angle) * distance),
+        y: Math.round(y - Math.sin(angle) * distance),
       }
     }
   }

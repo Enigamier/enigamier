@@ -1,5 +1,5 @@
 import type { Asset, AssetContext } from '@/assets/Asset'
-import { checkCollisions } from '@/enigamier/collide'
+import { checkCollisions } from '@/collide'
 import { CollidableAsset, type Enigamier, type GlobalController, type Texture } from '@/index'
 
 export interface SceneContext {

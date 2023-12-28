@@ -1,5 +1,5 @@
 import type { AssetContext, AssetMovement, KeyboardController, TextureSize } from '@/index'
-import { CollidableAsset, Texture } from '@/index'
+import { HitboxAsset, Texture } from '@/index'
 
 class PlayerBarTexture extends Texture {
   public size: TextureSize = { width: 30, height: 130 }
@@ -55,7 +55,7 @@ interface PlayerBarMoveKeys {
 
 const moveSpeed = 500 // per second
 
-export class PlayerBarAsset extends CollidableAsset {
+export class PlayerBarAsset extends HitboxAsset {
   declare public texture: PlayerBarTexture
 
   public readonly id

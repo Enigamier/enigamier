@@ -65,9 +65,9 @@ export class BattlegroundScene extends Scene {
     // DogeBall
     const dogeBallSize = width * 0.05
     const dogeBallScope = {
-      startX: player1BarAsset.texture.scope.endX,
+      startX: player1BarAsset.texture.scope.endX - 1,
       startY: scoreBarHeight,
-      endX: player2BarAsset.texture.scope.startX,
+      endX: player2BarAsset.texture.scope.startX + 1,
       endY: height,
     }
     const dogeBallAsset = new DogeBallAsset(this.onScore.bind(this))

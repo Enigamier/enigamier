@@ -1,6 +1,7 @@
 import type { SceneContext, TextureSize, TilesMap, TilesAtlas } from '@/index'
-import { ScrollableScene, TileMapAsset } from '@/index'
+import { ScrollableScene } from '@/index'
 
+import { MapLayerAsset } from './assets/MapLayerAsset'
 import atlasImageSrc from './imgs/terrain.png'
 import worldMapData from './maps/world-map.json'
 import { RectangleAsset } from '../ExampleScene/assets/Rectangle'
@@ -8,7 +9,7 @@ import { RectangleAsset } from '../ExampleScene/assets/Rectangle'
 const tilesMap: TilesMap = {
   rows: 71,
   cols: 88,
-  tileSize: 24,
+  tileSize: 32,
 }
 
 export class WorldScene extends ScrollableScene {
@@ -35,10 +36,10 @@ export class WorldScene extends ScrollableScene {
 
   public load(context: SceneContext): void {
     worldMapData.layers.forEach(mapLayer => {
-      const tileMapAsset = new TileMapAsset(`map-layer-${mapLayer.id}`, this.tilesAtlas, tilesMap)
-      tileMapAsset.texture.tiles = mapLayer.data
-      tileMapAsset.texture.index = mapLayer.id
-      this.addAsset(tileMapAsset)
+      const mapLayerAsset = new MapLayerAsset(`map-layer-${mapLayer.id}`, this.tilesAtlas, tilesMap)
+      mapLayerAsset.setTiles(mapLayer.data)
+      mapLayerAsset.texture.index = mapLayer.id
+      this.addAsset(mapLayerAsset)
     })
 
     const { width, height } = this.mapSize

@@ -1,6 +1,6 @@
 import type { TextureSize } from '@/textures'
 import type { Asset, AssetContext, AssetCoords } from '@/assets'
-import { areRectanglesOverlapping } from '@/enigamier/collide'
+import { areRectanglesOverlapping } from '@/collide/utils'
 
 import type { SceneContext } from './Scene'
 import { Scene } from './Scene'

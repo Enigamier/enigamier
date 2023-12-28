@@ -1,5 +1,5 @@
-import type { TextureSize } from '@/index'
-import { CollidableAsset, Texture } from '@/index'
+import type { TextureSize, CollisionInfo, RectangleCollideEntity } from '@/index'
+import { Texture, HitboxAsset } from '@/index'
 
 import type { PlayerBarAsset } from './PlayerBar'
 import dogeImage from '../../../imgs/doge_disk49.png'
@@ -62,7 +62,7 @@ function getInitialAngle() {
 
 export type ScoreCallback = (player: 1 | 2) => void
 
-export class DogeBallAsset extends CollidableAsset {
+export class DogeBallAsset extends HitboxAsset {
   declare public texture: DogeBallTexture
 
   public readonly id = 'DogeBall'
@@ -102,9 +102,12 @@ export class DogeBallAsset extends CollidableAsset {
     this.move(delta)
   }
 
-  public onCollide(barAsset: PlayerBarAsset): void {
-    const { startX: ballStartX, endX: ballEndX } = this.globalHitbox
-    const { startX: barStartX, endX: barEndX } = barAsset.globalHitbox
+  public onCollide(collisionInfo: CollisionInfo): void {
+    const barAsset = collisionInfo.asset as PlayerBarAsset
+    const ballEntity = collisionInfo.source as RectangleCollideEntity
+    const playerBarEntity = collisionInfo.target as RectangleCollideEntity
+    const { startX: ballStartX, endX: ballEndX } = ballEntity.data
+    const { startX: barStartX, endX: barEndX } = playerBarEntity.data
     const { y: ballCenterY } = this.texture.centerPoint
     const { y: barCenterY } = barAsset.texture.centerPoint
     const { height: barHeight } = barAsset.texture.size
@@ -124,14 +127,16 @@ export class DogeBallAsset extends CollidableAsset {
 
   private checkScopeCollide() {
     if (this.movement.speed) {
-      const { startX: ballStartX, startY: ballStartY, endX: ballEndX, endY: ballEndY } = this.globalHitbox
+      const ballEntity = this.collideEntities[0]
+      const { startX: ballStartX, startY: ballStartY, endX: ballEndX, endY: ballEndY } = ballEntity.data
       const { startX: scopeStartX, startY: scopeStartY, endX: scopeEndX, endY: scopeEndY } = this.texture.scope
 
       if (ballStartY < scopeStartY || ballEndY > scopeEndY) {
         this.movement.angle = getAngleAfterCollide(this.movement.angle, 'x')
-      } else if (ballStartX < scopeStartX) {
+        this.fixToScope()
+      } else if (ballStartX <= scopeStartX) {
         this.onScore(2)
-      } else if (ballEndX > scopeEndX) {
+      } else if (ballEndX >= scopeEndX) {
         this.onScore(1)
       }
     }

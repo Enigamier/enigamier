@@ -1,4 +1,5 @@
 export * from './enigamier'
+export * from './collide'
 export * from './scenes'
 export * from './controllers'
 export * from './assets'

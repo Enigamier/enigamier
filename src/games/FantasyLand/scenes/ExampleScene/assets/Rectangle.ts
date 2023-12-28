@@ -1,5 +1,12 @@
-import type { AssetContext, AssetMovement, KeyboardController, MouseController, MouseEventPayload } from '@/index'
-import { CollidableAsset, Texture } from '@/index'
+import type {
+  AssetContext,
+  AssetMovement,
+  CollisionInfo,
+  KeyboardController,
+  MouseController,
+  MouseEventPayload,
+} from '@/index'
+import { HitboxAsset, Texture, solidCollisionResolution } from '@/index'
 
 class RectangleTexture extends Texture {
 
@@ -21,7 +28,7 @@ interface RectangleMoveKeys {
   left: string;
 }
 
-export class RectangleAsset extends CollidableAsset {
+export class RectangleAsset extends HitboxAsset {
   declare public texture: RectangleTexture
 
   public id = 'RectangleAsset'
@@ -64,13 +71,15 @@ export class RectangleAsset extends CollidableAsset {
     }
   }
 
-  public onCollide(): void {
-    const { r, g, b } = {
-      r: Math.round(Math.random() * 255),
-      g: Math.round(Math.random() * 255),
-      b: Math.round(Math.random() * 255),
-    }
-    this.texture.color = `rgb(${r}, ${g}, ${b})`
+  public onCollide({ source, target }: CollisionInfo): void {
+    solidCollisionResolution(this, source, target)
+
+    // const { r, g, b } = {
+    //   r: Math.round(Math.random() * 255),
+    //   g: Math.round(Math.random() * 255),
+    //   b: Math.round(Math.random() * 255),
+    // }
+    // this.texture.color = `rgb(${r}, ${g}, ${b})`
   }
 
   private isCoordinateInset(x: number, y: number): boolean {

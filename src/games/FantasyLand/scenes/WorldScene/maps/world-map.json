@@ -187,7 +187,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "source":"..\/imgs\/terrain.tsj"
+         "source":"..\/imgs\/terrain.json"
         }],
  "tilewidth":16,
  "type":"map",
