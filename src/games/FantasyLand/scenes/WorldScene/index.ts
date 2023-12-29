@@ -4,12 +4,13 @@ import { ScrollableScene } from '@/index'
 import { MapLayerAsset } from './assets/MapLayerAsset'
 import atlasImageSrc from './imgs/terrain.png'
 import worldMapData from './maps/world-map.json'
-import { RectangleAsset } from '../ExampleScene/assets/Rectangle'
+import { RectangleAsset } from '../assets/Rectangle'
+import { HeroAsset } from './assets/HeroAsset'
 
 const tilesMap: TilesMap = {
   rows: 71,
   cols: 88,
-  tileSize: 32,
+  tileSize: 48,
 }
 
 export class WorldScene extends ScrollableScene {
@@ -63,7 +64,14 @@ export class WorldScene extends ScrollableScene {
     firstRectangleAsset.movement.speed = 300
     firstRectangleAsset.texture.scope = rectanglesScope
 
+    const heroAsset = new HeroAsset()
+    heroAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
+    heroAsset.texture.scope = rectanglesScope
+    heroAsset.texture.position = { x: 40 * tilesMap.tileSize, y: 33 * tilesMap.tileSize }
+    heroAsset.texture.index = 2
+
     this.addAsset(firstRectangleAsset)
+    this.addAsset(heroAsset)
 
     this.followAsset('Rectangle')
     super.load(context)

@@ -1,6 +1,6 @@
 import type { SceneContext, TextureSize } from '@/index'
 import { ScrollableScene } from '@/index'
-import { RectangleAsset } from './assets/Rectangle'
+import { RectangleAsset } from '../assets/Rectangle'
 
 export class ExampleScene extends ScrollableScene {
   public readonly id = 'Example'
