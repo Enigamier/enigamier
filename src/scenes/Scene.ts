@@ -23,8 +23,11 @@ export abstract class Scene {
     return Object.values(this.assets)
   }
 
-  public get collidableAssetsList() {
-    return this.assetsList.filter(asset => asset instanceof CollidableAsset) as CollidableAsset[]
+  public get collidableAssetsList(): CollidableAsset[] {
+    return this.assetsList.filter(asset => (
+      asset instanceof CollidableAsset &&
+      asset.collideEntities.length > 0
+    )) as CollidableAsset[]
   }
 
   protected get sortedAssetsByTexture(): Asset[] {

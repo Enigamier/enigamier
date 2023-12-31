@@ -141,6 +141,13 @@ export class MessageAsset extends Asset {
     })
   }
 
+  public unload(): void {
+    super.unload()
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId)
+    }
+  }
+
   public async showCountdown(from: number): Promise<void> {
     await this.showMessage(from.toString(), 1000)
     if (from > 1) {
