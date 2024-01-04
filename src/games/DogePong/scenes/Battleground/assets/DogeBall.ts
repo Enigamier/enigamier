@@ -1,11 +1,11 @@
-import type { TextureSize, CollisionInfo, RectangleCollideEntity } from '@/index'
+import type { RectSize, CollisionInfo, RectangleCollideEntity } from '@/index'
 import { Texture, HitboxAsset } from '@/index'
 
 import type { PlayerBarAsset } from './PlayerBar'
 import dogeImage from '../../../imgs/doge_disk49.png'
 
 class DogeBallTexture extends Texture {
-  public size: TextureSize = { width: 50, height: 50 }
+  public size: RectSize = { width: 50, height: 50 }
 
   public rotation = 0
 

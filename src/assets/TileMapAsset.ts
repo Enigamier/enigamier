@@ -1,8 +1,8 @@
 import type { TilesAtlas, TilesMap } from '@/textures'
 import { TileMapTexture } from '@/textures'
-import { CollidableAsset } from './CollidableAsset'
+import { Asset } from './Asset'
 
-export abstract class TileMapAsset extends CollidableAsset {
+export abstract class TileMapAsset extends Asset {
   declare public texture: TileMapTexture
 
   constructor(atlas: TilesAtlas, map: TilesMap) {

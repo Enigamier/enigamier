@@ -1,7 +1,7 @@
 import type { TilesAtlas } from '@/textures'
 import { TileObjectTexture } from '@/textures'
 import { ClockInterval } from '@/utils'
-import { CollidableAsset } from './CollidableAsset'
+import { Asset } from './Asset'
 import type { AssetContext } from './Asset'
 
 export interface TilesAnimationInfo {
@@ -11,7 +11,7 @@ export interface TilesAnimationInfo {
 
 export type TilesAnimationMap = Record<string, TilesAnimationInfo>
 
-export abstract class TileObjectAsset extends CollidableAsset {
+export abstract class TileObjectAsset extends Asset {
   declare public texture: TileObjectTexture
 
   protected readonly tilesAnimationsMap: TilesAnimationMap = { default: { tiles: [1] } }

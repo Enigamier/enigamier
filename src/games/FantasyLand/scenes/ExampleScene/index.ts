@@ -1,11 +1,11 @@
-import type { SceneContext, TextureSize } from '@/index'
+import type { SceneContext, RectSize } from '@/index'
 import { ScrollableScene } from '@/index'
 import { RectangleAsset } from '../assets/Rectangle'
 
 export class ExampleScene extends ScrollableScene {
   public readonly id = 'Example'
 
-  protected mapSize: TextureSize = {
+  protected mapSize: RectSize = {
     width: 3000,
     height: 2000,
   }

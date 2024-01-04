@@ -1,8 +1,8 @@
-import type { AssetContext, AssetMovement, KeyboardController, TextureSize } from '@/index'
+import type { AssetContext, AssetMovement, KeyboardController, RectSize } from '@/index'
 import { HitboxAsset, Texture } from '@/index'
 
 class PlayerBarTexture extends Texture {
-  public size: TextureSize = { width: 30, height: 130 }
+  public size: RectSize = { width: 30, height: 130 }
 
   public orientation: 'left' | 'right' = 'left'
 

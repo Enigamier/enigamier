@@ -1,6 +1,6 @@
-import type { Asset, AssetContext } from '@/assets/Asset'
+import type { AssetContext } from '@/assets/Asset'
 import { checkCollisions } from '@/collide'
-import { CollidableAsset, type Enigamier, type GlobalController, type Texture } from '@/index'
+import { Asset, type Enigamier, type GlobalController, type Texture } from '@/index'
 
 export interface SceneContext {
   enigamier: Enigamier;
@@ -23,11 +23,11 @@ export abstract class Scene {
     return Object.values(this.assets)
   }
 
-  public get collidableAssetsList(): CollidableAsset[] {
+  public get collidableAssetsList(): Asset[] {
     return this.assetsList.filter(asset => (
-      asset instanceof CollidableAsset &&
+      asset instanceof Asset &&
       asset.collideEntities.length > 0
-    )) as CollidableAsset[]
+    )) as Asset[]
   }
 
   protected get sortedAssetsByTexture(): Asset[] {

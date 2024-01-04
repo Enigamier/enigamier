@@ -59,7 +59,6 @@ export class MapLayerAsset extends TileMapAsset {
             const startX = this.globalCoords.startX + (col * tileSize) + x
             const startY = this.globalCoords.startY + (row * tileSize) + y
             return {
-              isPassive: true,
               type: CollideEntityTypes.rectangle,
               data: { startX, startY, endX: startX + width, endY: startY + height },
             }

@@ -1,4 +1,4 @@
-import type { TexturePosition } from '@/index'
+import type { PointCoords } from '@/index'
 import { Texture } from '@/index'
 
 import dogeImage from '../imgs/doge_disk.png'
@@ -10,7 +10,7 @@ export class MenuBackgroundTexture extends Texture {
 
   public dogeSize = .45
 
-  public dogeOffset: TexturePosition = {
+  public dogeOffset: PointCoords = {
     x: 0,
     y: 0,
   }

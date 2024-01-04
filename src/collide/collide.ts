@@ -1,16 +1,16 @@
-import type { CollidableAsset } from '@/assets/CollidableAsset'
+import type { Asset } from '@/assets/Asset'
 import { areRectanglesOverlapping, getCollidedEntities } from './utils'
 import type { CollideEntity } from './entities'
 
 export interface CollisionInfo {
-  asset: CollidableAsset;
+  asset: Asset;
   target: CollideEntity;
   source: CollideEntity;
 }
 
-export function checkCollisions(assets: CollidableAsset[]) {
-  const activeAssets: CollidableAsset[] = []
-  const passiveAssets: CollidableAsset[] = []
+export function checkCollisions(assets: Asset[]) {
+  const activeAssets: Asset[] = []
+  const passiveAssets: Asset[] = []
   assets.forEach(
     asset => (typeof asset.onCollide === 'function' ? activeAssets : passiveAssets).push(asset),
   )

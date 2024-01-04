@@ -1,4 +1,4 @@
-import type { GlobalController, Texture, CameraInfo } from '@/index'
+import type { GlobalController, Texture, CameraInfo, RectCoords, CollideEntity, CollisionInfo } from '@/index'
 
 export interface AssetContext {
   gc: GlobalController;
@@ -8,13 +8,6 @@ export interface AssetContext {
 export interface AssetMovement {
   angle: number;
   speed: number;
-}
-
-export interface AssetCoords {
-  startX: number;
-  startY: number;
-  endX: number;
-  endY: number;
 }
 
 export abstract class Asset {
@@ -32,7 +25,7 @@ export abstract class Asset {
     this.texture = texture
   }
 
-  public get globalCoords(): AssetCoords {
+  public get globalCoords(): RectCoords {
     const { scope: { startX, startY }, position: { x, y }, size: { width, height } } = this.texture
     return {
       startX: startX + x,
@@ -41,6 +34,12 @@ export abstract class Asset {
       endY: startY + y + height,
     }
   }
+
+  public get collideEntities(): CollideEntity[] {
+    return []
+  }
+
+  public onCollide?(collisionInfo: CollisionInfo): void
 
   public load(context: AssetContext) {
     this.context = context
@@ -61,7 +60,7 @@ export abstract class Asset {
 
   protected move(delta: number) {
     const { angle, speed } = this.movement
-    if (speed > 0) {
+    if (speed !== 0) {
       const { x, y } = this.texture.position
       const distance = speed * (delta / 1000)
       this.texture.position = {

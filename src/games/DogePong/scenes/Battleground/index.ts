@@ -1,4 +1,4 @@
-import type { SceneContext, TextureSize } from '@/index'
+import type { SceneContext, RectSize } from '@/index'
 import { Scene } from '@/index'
 
 import { ScoreBarAsset } from './assets/ScoreBar'
@@ -40,7 +40,7 @@ export class BattlegroundScene extends Scene {
 
     // Payer bars
     const playerBarsScopeOffsetX = width * .01
-    const playerBarsSize: TextureSize = { width: width * .025, height: height * .2 }
+    const playerBarsSize: RectSize = { width: width * .025, height: height * .2 }
     const playerBarsStartPosition = (height - scoreBarHeight) / 2 - playerBarsSize.height / 2
     const player1BarAsset = new PlayerBarAsset('Player1Bar', 'left', { up: 'w', down: 'a' })
     player1BarAsset.texture.position.y = playerBarsStartPosition

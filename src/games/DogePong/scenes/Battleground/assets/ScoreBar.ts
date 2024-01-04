@@ -1,7 +1,7 @@
-import type { TextureSize } from '@/index'
+import type { RectSize } from '@/index'
 import { Asset, Texture } from '@/index'
 
-const baseSize: TextureSize = { width: 800, height: 50 }
+const baseSize: RectSize = { width: 800, height: 50 }
 
 class ScoreBarTexture extends Texture {
   public size = { ...baseSize }

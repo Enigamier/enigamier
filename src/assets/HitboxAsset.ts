@@ -1,14 +1,12 @@
-import type { RectangleCollideEntity } from '@/collide/entities'
-import { CollideEntityTypes } from '@/collide/entities'
-import type { AssetCoords } from './Asset'
-import { CollidableAsset } from './CollidableAsset'
+import type { RectangleCollideEntity } from '@/collide'
+import { CollideEntityTypes } from '@/collide'
+import type { RectCoords } from '@/utils/coords'
+import { Asset } from './Asset'
 
-export abstract class HitboxAsset extends CollidableAsset {
-  protected hitbox: AssetCoords = { startX: 0, startY: 0, endX: 0, endY: 0 }
+export abstract class HitboxAsset extends Asset {
+  protected hitbox: RectCoords = { startX: 0, startY: 0, endX: 0, endY: 0 }
 
-  protected isPassive = false
-
-  private get globalHitbox(): AssetCoords {
+  private get globalHitbox(): RectCoords {
     const { startX, startY, endX, endY } = this.globalCoords
     return {
       startX: startX + this.hitbox.startX,
@@ -21,7 +19,6 @@ export abstract class HitboxAsset extends CollidableAsset {
   private get hitboxCollideEntity(): RectangleCollideEntity {
     return {
       type: CollideEntityTypes.rectangle,
-      isPassive: this.isPassive,
       data: this.globalHitbox,
     }
   }

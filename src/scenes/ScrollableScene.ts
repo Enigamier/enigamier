@@ -1,5 +1,5 @@
-import type { TextureSize } from '@/textures'
-import type { Asset, AssetContext, AssetCoords } from '@/assets'
+import type { Asset, AssetContext } from '@/assets'
+import type { RectCoords, RectSize } from '@/utils/coords'
 import { areRectanglesOverlapping } from '@/collide/utils'
 
 import type { SceneContext } from './Scene'
@@ -15,13 +15,13 @@ export interface CameraInfo {
 }
 
 export abstract class ScrollableScene extends Scene {
-  protected abstract readonly mapSize: TextureSize
+  protected abstract readonly mapSize: RectSize
 
   protected camera: CameraInfo = { x: 0, y: 0, width: 0, height: 0, maxX: 0, maxY: 0 }
 
   private followingAssets: Asset['id'][] = []
 
-  protected get cameraScope(): AssetCoords {
+  protected get cameraScope(): RectCoords {
     const { x, y, width, height } = this.camera
     return {
       startX: x,

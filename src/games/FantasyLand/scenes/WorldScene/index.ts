@@ -1,4 +1,4 @@
-import type { SceneContext, TextureSize, TilesMap, TilesAtlas } from '@/index'
+import type { SceneContext, RectSize, TilesMap, TilesAtlas } from '@/index'
 import { ScrollableScene } from '@/index'
 
 import { MapLayerAsset } from './assets/MapLayerAsset'
@@ -16,7 +16,7 @@ const tilesMap: TilesMap = {
 export class WorldScene extends ScrollableScene {
   public readonly id = 'World'
 
-  protected mapSize: TextureSize = {
+  protected mapSize: RectSize = {
     width: tilesMap.tileSize * tilesMap.cols,
     height: tilesMap.tileSize * tilesMap.rows,
   }

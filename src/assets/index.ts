@@ -1,5 +1,5 @@
 export * from './Asset'
-export * from './CollidableAsset'
+export * from './Asset'
 export * from './HitboxAsset'
 export * from './TileObjectAsset'
 export * from './ButtonAsset'

@@ -1,8 +1,8 @@
-import type { TextureSize } from '@/index'
+import type { RectSize } from '@/index'
 import { Asset, Texture } from '@/index'
 
 class MessageTexture extends Texture {
-  public size: TextureSize = { width: 300, height: 100 }
+  public size: RectSize = { width: 300, height: 100 }
 
   public fontSize = 35
 

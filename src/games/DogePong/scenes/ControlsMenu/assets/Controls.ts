@@ -1,4 +1,4 @@
-import type { TextureSize } from '@/index'
+import type { RectSize } from '@/index'
 import { Asset, Texture } from '@/index'
 
 type ControlsDir = 'left' | 'right'
@@ -8,7 +8,7 @@ interface ControlsKeys {
   down: string;
 }
 
-const baseSize: TextureSize = { width: 150, height: 150 }
+const baseSize: RectSize = { width: 150, height: 150 }
 
 class ControlsTexture extends Texture {
   public size = { ...baseSize }

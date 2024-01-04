@@ -1,10 +1,10 @@
-import type { CollidableAsset } from '@/assets'
+import type { Asset } from '@/assets'
 
 import type { CollideEntity, RectangleCollideEntity } from './entities'
 import { CollideEntityTypes } from './entities'
 
 export function solidCollisionResolution(
-  asset: CollidableAsset,
+  asset: Asset,
   source: CollideEntity,
   target: CollideEntity,
 ) {

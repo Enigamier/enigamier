@@ -1,9 +1,10 @@
-import type { AssetCoords, CollidableAsset } from '@/assets'
+import type { Asset } from '@/assets'
+import type { RectCoords } from '@/utils/coords'
 
 import type { CollideEntity, RectangleCollideEntity } from './entities'
 import { CollideEntityTypes } from './entities'
 
-export function areRectanglesOverlapping(rect1: AssetCoords, rect2: AssetCoords): boolean {
+export function areRectanglesOverlapping(rect1: RectCoords, rect2: RectCoords): boolean {
   return (
     rect1.startX < rect2.endX &&
     rect1.endX > rect2.startX &&
@@ -12,7 +13,7 @@ export function areRectanglesOverlapping(rect1: AssetCoords, rect2: AssetCoords)
   )
 }
 
-function getDistanceBetween2Rectangles(rect1: AssetCoords, rect2: AssetCoords): number {
+function getDistanceBetween2Rectangles(rect1: RectCoords, rect2: RectCoords): number {
   const center1 = {
     x: Math.round((rect1.startX - rect1.endX) / 2) + rect1.startX,
     y: Math.round((rect1.startY - rect1.endY) / 2) + rect1.startY,
@@ -54,7 +55,7 @@ function sortEntitiesByDistance(
 
 export function getCollidedEntities(
   sourceEntity: CollideEntity,
-  targetAsset: CollidableAsset,
+  targetAsset: Asset,
 ): CollideEntity[] {
   let collidedEntities = targetAsset.collideEntities.filter(targetEntity => (
     sourceEntity.type === CollideEntityTypes.rectangle &&
