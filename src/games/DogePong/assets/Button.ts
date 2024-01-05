@@ -25,7 +25,6 @@ class ButtonTexture extends Texture {
   }
 
   public render(cxt: CanvasRenderingContext2D) {
-    super.render(cxt)
     const { width, height } = this.size
     const { x: centerX, y: centerY } = this.centerPoint
     const borderRadius = 10
@@ -106,7 +105,7 @@ export class Button extends ButtonAsset {
     super(new ButtonTexture(), callback)
     this.id = id
     this.texture.size.width = width
-    this.texture.scope = {
+    this.scope = {
       startX: x,
       startY: y,
       endX: this.texture.size.width,

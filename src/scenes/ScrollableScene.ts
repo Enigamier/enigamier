@@ -54,8 +54,8 @@ export abstract class ScrollableScene extends Scene {
   public render() {
     const ctx = this.context.canvasContext
     ctx.save()
-    ctx.translate(-this.camera.x, -this.camera.y)
     this.renderBgTexture()
+    ctx.translate(-this.camera.x, -this.camera.y)
     this.sortedAssetsInCameraByTexture.forEach(this.renderAsset.bind(this))
     ctx.restore()
   }
@@ -64,17 +64,6 @@ export abstract class ScrollableScene extends Scene {
     const { maxX, maxY } = this.camera
     this.camera.x = Math.max(Math.min(x, maxX), 0)
     this.camera.y = Math.max(Math.min(y, maxY), 0)
-  }
-
-  protected renderBgTexture() {
-    if (this.bgTexture) {
-      const { canvasContext: ctx } = this.context
-      const { x, y } = this.camera
-      ctx.save()
-      this.bgTexture.position = { x, y }
-      this.bgTexture.render(this.context.canvasContext)
-      ctx.restore()
-    }
   }
 
   protected followAsset(assetId: Asset['id']) {
@@ -89,10 +78,11 @@ export abstract class ScrollableScene extends Scene {
     if (this.followingAssets.length) {
       const followedAsset = this.assets[this.followingAssets[0]]
       const { width, height } = this.camera
-      const { centerPoint, scope } = followedAsset.texture
+      const { globalPosition: { x, y } } = followedAsset
+      const { centerPoint } = followedAsset.texture
       const targetPoint = {
-        x: scope.startX + centerPoint.x,
-        y: scope.startX + centerPoint.y,
+        x: x + centerPoint.x,
+        y: y + centerPoint.y,
       }
       this.moveCamera(
         targetPoint.x - Math.round(width / 2),

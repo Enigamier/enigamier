@@ -21,18 +21,18 @@ export class MenuBackgroundTexture extends Texture {
     this.img.src = dogeImage
   }
 
-  public render(cxt: CanvasRenderingContext2D): void {
-    const { position: { x, y }, size: { width, height } } = this
+  public render(ctx: CanvasRenderingContext2D): void {
+    const { width, height } = this.size
     const { x: centerX, y: centerY } = this.centerPoint
-    const fillGrad = cxt.createLinearGradient(0, 0, 0, height)
+    const fillGrad = ctx.createLinearGradient(0, 0, 0, height)
     const imgSize = width * this.dogeSize
     fillGrad.addColorStop(0, '#f2f2f2')
     fillGrad.addColorStop(1, '#e2e2e2')
-    cxt.fillStyle = fillGrad
-    cxt.fillRect(x, y, width, height)
+    ctx.fillStyle = fillGrad
+    ctx.fillRect(0, 0, width, height)
 
-    cxt.translate(centerX + this.dogeOffset.x * width, centerY + this.dogeOffset.y * height)
-    cxt.rotate(this.dogeRotation)
-    cxt.drawImage(this.img, -imgSize / 2, -imgSize / 2, imgSize, imgSize)
+    ctx.translate(centerX + this.dogeOffset.x * width, centerY + this.dogeOffset.y * height)
+    ctx.rotate(this.dogeRotation)
+    ctx.drawImage(this.img, -imgSize / 2, -imgSize / 2, imgSize, imgSize)
   }
 }

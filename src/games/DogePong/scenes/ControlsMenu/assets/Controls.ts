@@ -24,7 +24,6 @@ class ControlsTexture extends Texture {
   }
 
   public render(cxt: CanvasRenderingContext2D) {
-    super.render(cxt)
     const { dir, keys } = this
     const { width, height } = baseSize
     const fillColor = 'rgba(255,255,255,0.6)'
@@ -140,8 +139,8 @@ export class ControlsAsset extends Asset {
   ) {
     super(new ControlsTexture(dir, keys))
     this.id = id
-    this.texture.scope = {
-      ...this.texture.scope,
+    this.scope = {
+      ...this.scope,
       startX: x,
       startY: y,
     }

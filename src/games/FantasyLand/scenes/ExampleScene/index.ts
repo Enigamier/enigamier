@@ -25,7 +25,7 @@ export class ExampleScene extends ScrollableScene {
       right: 'ArrowRight',
     })
     firstRectangleAsset.texture.size = { width: 200, height: 200 }
-    firstRectangleAsset.texture.scope = rectanglesScope
+    firstRectangleAsset.scope = rectanglesScope
 
     const secondRectangleAsset = new RectangleAsset({
       up: 'w',
@@ -34,9 +34,9 @@ export class ExampleScene extends ScrollableScene {
       right: 'd',
     })
     secondRectangleAsset.id = 'secondRectangle'
-    secondRectangleAsset.texture.position = { x: 300, y: 200 }
+    secondRectangleAsset.position = { x: 300, y: 200 }
     secondRectangleAsset.texture.color = 'pink'
-    secondRectangleAsset.texture.scope = rectanglesScope
+    secondRectangleAsset.scope = rectanglesScope
 
     this.addAsset(firstRectangleAsset)
     this.addAsset(secondRectangleAsset)

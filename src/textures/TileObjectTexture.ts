@@ -12,7 +12,6 @@ export class TileObjectTexture extends Texture {
   }
 
   public render(ctx: CanvasRenderingContext2D): void {
-    super.render(ctx)
     if (this.tile) {
       const tileAtlasPos = this.getAtlasTilePos(this.tile - 1)
       ctx.drawImage(
@@ -21,8 +20,8 @@ export class TileObjectTexture extends Texture {
         tileAtlasPos.y,
         this.atlas.tileSize,
         this.atlas.tileSize,
-        this.position.x,
-        this.position.y,
+        0,
+        0,
         this.size.width,
         this.size.height,
       )

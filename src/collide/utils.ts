@@ -1,4 +1,3 @@
-import type { Asset } from '@/assets'
 import type { RectCoords } from '@/utils/coords'
 
 import type { CollideEntity, RectangleCollideEntity } from './entities'
@@ -55,9 +54,9 @@ function sortEntitiesByDistance(
 
 export function getCollidedEntities(
   sourceEntity: CollideEntity,
-  targetAsset: Asset,
+  entitiesToCheck: CollideEntity[],
 ): CollideEntity[] {
-  let collidedEntities = targetAsset.collideEntities.filter(targetEntity => (
+  let collidedEntities = entitiesToCheck.filter(targetEntity => (
     sourceEntity.type === CollideEntityTypes.rectangle &&
     targetEntity.type === CollideEntityTypes.rectangle &&
     areRectanglesOverlapping(

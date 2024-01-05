@@ -18,7 +18,6 @@ class DogeBallTexture extends Texture {
   }
 
   public render(ctx: CanvasRenderingContext2D) {
-    super.render(ctx)
     const { size: { width, height }, img, rotation } = this
     const { x: centerX, y: centerY } = this.centerPoint
     const borderWidth = width / 50
@@ -89,8 +88,9 @@ export class DogeBallAsset extends HitboxAsset {
   public reset() {
     this.stop()
     this.texture.rotation = 0
-    const { scope: { startX, startY, endX, endY }, size: { width, height } } = this.texture
-    this.texture.position = {
+    const { startX, startY, endX, endY } = this.scope
+    const { width, height } = this.texture.size
+    this.position = {
       x: (endX - startX) / 2 - width / 2,
       y: (endY - startY) / 2 - height / 2,
     }
@@ -118,7 +118,7 @@ export class DogeBallAsset extends HitboxAsset {
       this.movement.angle = newAngle
 
       const offsetX = barAsset.id === 'Player1Bar' ? barEndX - ballStartX : barStartX - ballEndX
-      this.texture.position.x += offsetX
+      this.position.x += offsetX
 
       this.movement.speed += speedIncrementPerCollide
       this.rotationSpeed += rotationSpeedIncrementPerCollide
@@ -129,7 +129,7 @@ export class DogeBallAsset extends HitboxAsset {
     if (this.movement.speed) {
       const ballEntity = this.collideEntities[0]
       const { startX: ballStartX, startY: ballStartY, endX: ballEndX, endY: ballEndY } = ballEntity.data
-      const { startX: scopeStartX, startY: scopeStartY, endX: scopeEndX, endY: scopeEndY } = this.texture.scope
+      const { startX: scopeStartX, startY: scopeStartY, endX: scopeEndX, endY: scopeEndY } = this.scope
 
       if (ballStartY < scopeStartY || ballEndY > scopeEndY) {
         this.movement.angle = getAngleAfterCollide(this.movement.angle, 'x')

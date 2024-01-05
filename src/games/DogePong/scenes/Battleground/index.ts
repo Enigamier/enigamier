@@ -43,9 +43,9 @@ export class BattlegroundScene extends Scene {
     const playerBarsSize: RectSize = { width: width * .025, height: height * .2 }
     const playerBarsStartPosition = (height - scoreBarHeight) / 2 - playerBarsSize.height / 2
     const player1BarAsset = new PlayerBarAsset('Player1Bar', 'left', { up: 'w', down: 'a' })
-    player1BarAsset.texture.position.y = playerBarsStartPosition
+    player1BarAsset.position.y = playerBarsStartPosition
     player1BarAsset.texture.size = playerBarsSize
-    player1BarAsset.texture.scope = {
+    player1BarAsset.scope = {
       startX: playerBarsScopeOffsetX,
       startY: scoreBarHeight,
       endX: playerBarsScopeOffsetX + playerBarsSize.width,
@@ -53,9 +53,9 @@ export class BattlegroundScene extends Scene {
     }
 
     const player2BarAsset = new PlayerBarAsset('Player2Bar', 'right', { up: 'p', down: 'l' })
-    player2BarAsset.texture.position.y = playerBarsStartPosition
+    player2BarAsset.position.y = playerBarsStartPosition
     player2BarAsset.texture.size = playerBarsSize
-    player2BarAsset.texture.scope = {
+    player2BarAsset.scope = {
       startX: width - playerBarsScopeOffsetX - playerBarsSize.width,
       startY: scoreBarHeight,
       endX: width - playerBarsScopeOffsetX,
@@ -65,20 +65,21 @@ export class BattlegroundScene extends Scene {
     // DogeBall
     const dogeBallSize = width * 0.05
     const dogeBallScope = {
-      startX: player1BarAsset.texture.scope.endX - 1,
+      startX: player1BarAsset.scope.endX - 1,
       startY: scoreBarHeight,
-      endX: player2BarAsset.texture.scope.startX + 1,
+      endX: player2BarAsset.scope.startX + 1,
       endY: height,
     }
     const dogeBallAsset = new DogeBallAsset(this.onScore.bind(this))
     dogeBallAsset.texture.size = { width: dogeBallSize, height: dogeBallSize }
-    dogeBallAsset.texture.scope = dogeBallScope
+    dogeBallAsset.scope = dogeBallScope
     dogeBallAsset.reset()
 
     // Message
-    const messageAsset = new MessageAsset()
-    messageAsset.texture.scope = {
-      ...messageAsset.texture.scope,
+    const messageAsset = new MessageAsset(width / 2)
+    messageAsset.position = { x: width / 2, y: height / 2 }
+    messageAsset.scope = {
+      ...messageAsset.scope,
       endX: width,
       endY: height,
     }

@@ -7,9 +7,7 @@ class PlayerBarTexture extends Texture {
   public orientation: 'left' | 'right' = 'left'
 
   public render(ctx: CanvasRenderingContext2D) {
-    super.render(ctx)
     const { size: { width, height }, orientation } = this
-    const { x, y } = this.position
     const backgroundColor = 'white'
     const font = `bold ${width / 1.7}px Comic Sans MS`
     const borderColor = 'black'
@@ -20,25 +18,25 @@ class PlayerBarTexture extends Texture {
 
     // Background
     ctx.fillStyle = backgroundColor
-    ctx.fillRect(x, y, width, height)
+    ctx.fillRect(0, 0, width, height)
 
     // Border
     ctx.beginPath()
 
-    ctx.moveTo(x, y + borderOffset)
-    ctx.lineTo(x + width, y + borderOffset)
-    ctx.moveTo(x, y + height - borderOffset)
-    ctx.lineTo(x + width, y + height - borderOffset)
-    ctx.moveTo(x + borderOffset, y)
-    ctx.lineTo(x + borderOffset, y + height)
-    ctx.moveTo(x + width - borderOffset, y)
-    ctx.lineTo(x + width - borderOffset, y + height)
+    ctx.moveTo(0, borderOffset)
+    ctx.lineTo(width, borderOffset)
+    ctx.moveTo(0, height - borderOffset)
+    ctx.lineTo(width, height - borderOffset)
+    ctx.moveTo(borderOffset, 0)
+    ctx.lineTo(borderOffset, height)
+    ctx.moveTo(width - borderOffset, 0)
+    ctx.lineTo(width - borderOffset, height)
     ctx.lineWidth = borderWidth
     ctx.strokeStyle = borderColor
     ctx.stroke()
 
     //Texto
-    ctx.translate(x + width / 2, y + height / 2)
+    ctx.translate(width / 2, height / 2)
     ctx.rotate((orientation == 'right' ? -1 : 1) * Math.PI / 2)
     ctx.font = font
     ctx.textAlign = 'center'

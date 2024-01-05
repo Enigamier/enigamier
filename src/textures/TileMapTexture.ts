@@ -39,16 +39,10 @@ export class TileMapTexture extends Texture {
       endRow: map.rows - 1,
       endCol: map.cols - 1,
     }
-    this.scope = {
-      ...this.scope,
-      endX: map.cols * map.tileSize,
-      endY: map.rows * map.tileSize,
-    }
-    this.size = { width: this.scope.endX, height: this.scope.endY }
+    this.size = { width: map.cols * map.tileSize, height: map.rows * map.tileSize }
   }
 
   public render(ctx: CanvasRenderingContext2D): void {
-    super.render(ctx)
     if (this.tiles) {
       const { startRow, startCol, endRow, endCol } = this.visibleArea
       for (let r = startRow; r <= endRow; r++) {

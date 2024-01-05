@@ -16,15 +16,13 @@ class TextTexture extends Texture {
   public isGradient = false
 
   public render(cxt: CanvasRenderingContext2D) {
-    super.render(cxt)
-    const { x, y } = this.position
     const { width, height } = this.size
     const { x: centerX, y: centerY } = this.centerPoint
 
     //Fondo
     if (this.bgColor != 'transparent') {
       cxt.fillStyle = this.bgColor
-      cxt.fillRect(x, y, width, height)
+      cxt.fillRect(0, 0, width, height)
     }
 
     //Texto
@@ -59,7 +57,7 @@ export class Text extends Asset {
     super(new TextTexture())
     this.id = id
     this.texture.text = text
-    this.texture.scope = {
+    this.scope = {
       startX: x,
       startY: y,
       endX: this.texture.size.width,

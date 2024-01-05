@@ -15,13 +15,13 @@ export function checkCollisions(assets: Asset[]) {
     asset => (typeof asset.onCollide === 'function' ? activeAssets : passiveAssets).push(asset),
   )
   activeAssets.forEach((sourceAsset, sourceI) => {
-    const sourceScope = sourceAsset.texture.scope
+    const sourceScope = sourceAsset.scope
     const targetAssets = [...activeAssets.slice(sourceI + 1), ...passiveAssets]
     targetAssets.forEach(targetAsset => {
-      const { texture: { scope: targetScope } } = targetAsset
+      const { scope: targetScope } = targetAsset
       if (areRectanglesOverlapping(sourceScope, targetScope)) {
         sourceAsset.collideEntities.forEach(sourceEntity => {
-          const collidedEntities = getCollidedEntities(sourceEntity, targetAsset)
+          const collidedEntities = getCollidedEntities(sourceEntity, targetAsset.collideEntities)
           collidedEntities.forEach(targetEntity => {
             sourceAsset.onCollide?.({
               asset: targetAsset,

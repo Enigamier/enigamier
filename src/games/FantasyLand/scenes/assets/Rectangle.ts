@@ -15,9 +15,8 @@ class RectangleTexture extends Texture {
   public color = 'rgb(255, 0, 0)'
 
   public render(cxt: CanvasRenderingContext2D) {
-    super.render(cxt)
     cxt.fillStyle = this.color
-    cxt.fillRect(this.position.x, this.position.y, this.size.width, this.size.height)
+    cxt.fillRect(0, 0, this.size.width, this.size.height)
   }
 }
 
@@ -83,10 +82,10 @@ export class RectangleAsset extends HitboxAsset {
   }
 
   private isCoordinateInset(x: number, y: number): boolean {
-    const { position, size } = this.texture
+    const { startX, startY, endX, endY } = this.globalCoords
     return (
-      (x >= position.x && x <= position.x + size.width) &&
-      (y >= position.y && y <= position.y + size.height)
+      (x >= startX && x <= endX) &&
+      (y >= startY && y <= endY)
     )
   }
 

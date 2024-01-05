@@ -10,16 +10,19 @@ class MessageTexture extends Texture {
 
   public text = ''
 
+  public maxWidth: number
+
   public alpha = 0
 
-  public render(ctx: CanvasRenderingContext2D) {
-    super.render(ctx)
+  constructor(maxWidth: number) {
+    super()
+    this.maxWidth = maxWidth
+  }
 
+  public render(ctx: CanvasRenderingContext2D) {
     if (this.text.length) {
       ctx.save()
 
-      const { startX, startY, endX, endY } = this.scope
-      const maxWidth = (endX - startX) / 2
       const padding = this.fontSize * .75
       const lineHeight = this.fontSize * this.lineHeightRel
       const font = `bold ${this.fontSize}px Comic Sans MS`
@@ -30,7 +33,7 @@ class MessageTexture extends Texture {
       let lineI = 0
       for (const word of words) {
         const currentLine = `${lines[lineI]}${lines[lineI].length ? ' ' : ''}${word}`
-        if (ctx.measureText(currentLine).width < maxWidth - (padding * 2)) {
+        if (ctx.measureText(currentLine).width < this.maxWidth - (padding * 2)) {
           lines[lineI] = currentLine
         } else {
           ++lineI
@@ -39,15 +42,12 @@ class MessageTexture extends Texture {
       }
 
       const largerLineWidth = Math.max(...lines.map(line => ctx.measureText(line).width))
-      this.size = {
-        width: largerLineWidth + (padding * 2),
-        height: (lines.length * lineHeight) + (padding * 2),
-      }
-      this.position = {
-        x: startX + ((endX - startX) / 2) - this.size.width / 2,
-        y: startY + ((endY - startY) / 2) - this.size.height / 2,
-      }
-      const { position: { x, y }, size: { width, height } } = this
+      const width = largerLineWidth + (padding * 2)
+      const height = (lines.length * lineHeight) + (padding * 2)
+      this.size = { width, height }
+
+      const x = -this.size.width / 2
+      const y = -this.size.height / 2
       const startColor = 'red'
       const endColor = 'yellow'
       const fontColor = 'white'
@@ -118,8 +118,8 @@ export class MessageAsset extends Asset {
 
   private timeoutId?: NodeJS.Timeout
 
-  constructor() {
-    super(new MessageTexture())
+  constructor(maxWidth: number) {
+    super(new MessageTexture(maxWidth))
   }
 
   public showMessage(text: string, timeout: number): Promise<void> {

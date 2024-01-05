@@ -31,7 +31,7 @@ export abstract class Scene {
   }
 
   protected get sortedAssetsByTexture(): Asset[] {
-    return this.assetsList.sort((assetA, assetB) => assetA.texture.index - assetB.texture.index)
+    return this.assetsList.sort((assetA, assetB) => assetA.index - assetB.index)
   }
 
   public load(context: SceneContext) {
@@ -87,8 +87,6 @@ export abstract class Scene {
   protected initBgTexture() {
     if (this.bgTexture) {
       const { enigamier: { canvas: { width, height } } } = this.context
-      const { scope } = this.bgTexture
-      this.bgTexture.scope = { ...scope, endX: width, endY: height }
       this.bgTexture.size = { width, height }
     }
   }

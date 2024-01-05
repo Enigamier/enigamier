@@ -39,7 +39,7 @@ export class WorldScene extends ScrollableScene {
     worldMapData.layers.forEach(mapLayer => {
       const mapLayerAsset = new MapLayerAsset(`map-layer-${mapLayer.id}`, this.tilesAtlas, tilesMap)
       mapLayerAsset.setTiles(mapLayer.data)
-      mapLayerAsset.texture.index = mapLayer.id
+      mapLayerAsset.index = mapLayer.id
       this.addAsset(mapLayerAsset)
     })
 
@@ -59,16 +59,16 @@ export class WorldScene extends ScrollableScene {
     firstRectangleAsset.id = 'Rectangle'
     firstRectangleAsset.texture.color = 'darkgreen'
     firstRectangleAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
-    firstRectangleAsset.texture.position = { x: 40 * tilesMap.tileSize, y: 30 * tilesMap.tileSize }
-    firstRectangleAsset.texture.index = 2
+    firstRectangleAsset.position = { x: 40 * tilesMap.tileSize, y: 30 * tilesMap.tileSize }
+    firstRectangleAsset.index = 2
     firstRectangleAsset.movement.speed = 300
-    firstRectangleAsset.texture.scope = rectanglesScope
+    firstRectangleAsset.scope = rectanglesScope
 
     const heroAsset = new HeroAsset()
     heroAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
-    heroAsset.texture.scope = rectanglesScope
-    heroAsset.texture.position = { x: 40 * tilesMap.tileSize, y: 33 * tilesMap.tileSize }
-    heroAsset.texture.index = 2
+    heroAsset.scope = rectanglesScope
+    heroAsset.position = { x: 40 * tilesMap.tileSize, y: 33 * tilesMap.tileSize }
+    heroAsset.index = 2
 
     this.addAsset(firstRectangleAsset)
     this.addAsset(heroAsset)

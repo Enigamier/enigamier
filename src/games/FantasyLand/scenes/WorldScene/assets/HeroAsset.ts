@@ -118,6 +118,7 @@ export class HeroAsset extends TileObjectAsset {
   }
 
   public onCollide({ source, target }: CollisionInfo): void {
+    console.log('asdasd')
     solidCollisionResolution(this, source, target)
   }
 

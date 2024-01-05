@@ -7,6 +7,8 @@ export abstract class TileMapAsset extends Asset {
 
   constructor(atlas: TilesAtlas, map: TilesMap) {
     super(new TileMapTexture(atlas, map))
+    this.scope.endX += this.texture.size.width
+    this.scope.endY += this.texture.size.height
   }
 
   protected get tileSizeDelta(): number {

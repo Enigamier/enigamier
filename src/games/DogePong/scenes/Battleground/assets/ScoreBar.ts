@@ -11,7 +11,6 @@ class ScoreBarTexture extends Texture {
   public scores = [0, 0]
 
   public render(cxt: CanvasRenderingContext2D) {
-    super.render(cxt)
     const { width, height } = baseSize
     const backgroundColor = 'whitesmoke'
     const borderColor = 'black'

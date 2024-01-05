@@ -29,13 +29,13 @@ export function solidCollisionResolution(
       case 2:
         sourceData.startY -= distance
         sourceData.endY -= distance
-        asset.texture.position.y -= distance
+        asset.position.y -= distance
         break
       case 1:
       case 3:
         sourceData.startX -= distance
         sourceData.endX -= distance
-        asset.texture.position.x -= distance
+        asset.position.x -= distance
     }
   }
 }
