@@ -41,10 +41,13 @@ const moveKeys: HeroMoveKeys = {
   right: 'd',
 }
 
+const normalSpeed = 300
+const grassSpeed = 150
+
 export class HeroAsset extends TileObjectAsset {
   public readonly id = 'HeroAsset'
 
-  public movement: AssetMovement = { angle: 0, speed: 300 }
+  public movement: AssetMovement = { angle: 0, speed: normalSpeed }
 
   protected tilesAnimationsMap: TilesAnimationMap = {
     standFront: { tiles: [1] },
@@ -74,6 +77,8 @@ export class HeroAsset extends TileObjectAsset {
     return [
       {
         type: CollideEntityTypes.rectangle,
+        kind: 'hero',
+        collideWith: ['wall', 'grass'],
         data: this.globalCoords,
       },
     ]
@@ -115,11 +120,15 @@ export class HeroAsset extends TileObjectAsset {
     if (newAnimationId !== this.tilesAnimationId) {
       this.setTilesAnimation(newAnimationId)
     }
+    this.movement.speed = normalSpeed
   }
 
   public onCollide({ source, target }: CollisionInfo): void {
-    console.log('asdasd')
-    solidCollisionResolution(this, source, target)
+    if (target.kind === 'wall') {
+      solidCollisionResolution(this, source, target)
+    } else if (target.kind === 'grass') {
+      this.movement.speed = grassSpeed
+    }
   }
 
   private getNewAnimationId(walkingDir?: string) {

@@ -7,6 +7,8 @@ export enum CollideEntityTypes {
 export interface CollideEntity {
   type: CollideEntityTypes;
   data: unknown;
+  kind?: string;
+  collideWith?: string[];
 }
 
 export interface RectangleCollideEntity extends CollideEntity {

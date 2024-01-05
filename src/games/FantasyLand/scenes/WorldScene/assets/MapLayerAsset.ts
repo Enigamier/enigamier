@@ -8,6 +8,7 @@ interface TileObjectInfo {
   y: number;
   width: number;
   height: number;
+  kind: string;
 }
 
 export class MapLayerAsset extends TileMapAsset {
@@ -29,11 +30,12 @@ export class MapLayerAsset extends TileMapAsset {
     if (Array.isArray(terrainTiles.tiles)) {
       terrainTiles.tiles.forEach(tileInfo => {
         tilesEntitiesMap[tileInfo.id] = tileInfo.objectgroup?.objects.map(
-          ({ x, y, width, height }) => ({
+          ({ x, y, width, height, type }) => ({
             x: Math.round(x * this.tileSizeDelta),
             y: Math.round(y * this.tileSizeDelta),
             width: Math.round(width * this.tileSizeDelta),
             height: Math.round(height * this.tileSizeDelta),
+            kind: type,
           }),
         )
       })
@@ -55,12 +57,13 @@ export class MapLayerAsset extends TileMapAsset {
           const { cols, tileSize } = this.texture.map
           const row = Math.floor(tileIndex / cols)
           const col = tileIndex % cols
-          collideEntities = this.tileCollisionObjectsMap[tileId].map(({ x, y, width, height }) => {
+          collideEntities = this.tileCollisionObjectsMap[tileId].map(({ x, y, width, height, kind }) => {
             const startX = this.globalCoords.startX + (col * tileSize) + x
             const startY = this.globalCoords.startY + (row * tileSize) + y
             return {
               type: CollideEntityTypes.rectangle,
               data: { startX, startY, endX: startX + width, endY: startY + height },
+              kind,
             }
           })
         }

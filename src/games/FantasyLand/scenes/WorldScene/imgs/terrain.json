@@ -10,6 +10,32 @@
  "tileheight":16,
  "tiles":[
         {
+         "id":22,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":16,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "type":"grass",
+                     "visible":true,
+                     "width":16,
+                     "x":0,
+                     "y":0
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            }
+        }, 
+        {
          "id":24,
          "objectgroup":
             {
@@ -22,7 +48,7 @@
                      "id":1,
                      "name":"",
                      "rotation":0,
-                     "type":"",
+                     "type":"wall",
                      "visible":true,
                      "width":13,
                      "x":2,
@@ -40,6 +66,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -47,7 +74,7 @@
                      "id":1,
                      "name":"",
                      "rotation":0,
-                     "type":"",
+                     "type":"wall",
                      "visible":true,
                      "width":15,
                      "x":1,
@@ -73,7 +100,7 @@
                      "id":1,
                      "name":"",
                      "rotation":0,
-                     "type":"",
+                     "type":"wall",
                      "visible":true,
                      "width":15,
                      "x":1,
@@ -99,7 +126,7 @@
                      "id":1,
                      "name":"",
                      "rotation":0,
-                     "type":"",
+                     "type":"wall",
                      "visible":true,
                      "width":14,
                      "x":2,
@@ -117,6 +144,7 @@
          "objectgroup":
             {
              "draworder":"index",
+             "id":2,
              "name":"",
              "objects":[
                     {
@@ -124,7 +152,7 @@
                      "id":1,
                      "name":"",
                      "rotation":0,
-                     "type":"",
+                     "type":"wall",
                      "visible":true,
                      "width":16,
                      "x":0,
@@ -150,7 +178,7 @@
                      "id":1,
                      "name":"",
                      "rotation":0,
-                     "type":"",
+                     "type":"wall",
                      "visible":true,
                      "width":14,
                      "x":0,

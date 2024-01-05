@@ -8,8 +8,8 @@ import { RectangleAsset } from '../assets/Rectangle'
 import { HeroAsset } from './assets/HeroAsset'
 
 const tilesMap: TilesMap = {
-  rows: 71,
-  cols: 88,
+  rows: 45,
+  cols: 52,
   tileSize: 48,
 }
 
@@ -36,13 +36,6 @@ export class WorldScene extends ScrollableScene {
   }
 
   public load(context: SceneContext): void {
-    worldMapData.layers.forEach(mapLayer => {
-      const mapLayerAsset = new MapLayerAsset(`map-layer-${mapLayer.id}`, this.tilesAtlas, tilesMap)
-      mapLayerAsset.setTiles(mapLayer.data)
-      mapLayerAsset.index = mapLayer.id
-      this.addAsset(mapLayerAsset)
-    })
-
     const { width, height } = this.mapSize
     const rectanglesScope = {
       startX: 0,
@@ -59,19 +52,25 @@ export class WorldScene extends ScrollableScene {
     firstRectangleAsset.id = 'Rectangle'
     firstRectangleAsset.texture.color = 'darkgreen'
     firstRectangleAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
-    firstRectangleAsset.position = { x: 40 * tilesMap.tileSize, y: 30 * tilesMap.tileSize }
-    firstRectangleAsset.index = 2
+    firstRectangleAsset.position = { x: 16 * tilesMap.tileSize, y: 12 * tilesMap.tileSize }
+    firstRectangleAsset.index = 1
     firstRectangleAsset.movement.speed = 300
     firstRectangleAsset.scope = rectanglesScope
+    this.addAsset(firstRectangleAsset)
 
     const heroAsset = new HeroAsset()
     heroAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
     heroAsset.scope = rectanglesScope
-    heroAsset.position = { x: 40 * tilesMap.tileSize, y: 33 * tilesMap.tileSize }
-    heroAsset.index = 2
-
-    this.addAsset(firstRectangleAsset)
+    heroAsset.position = { x: 13 * tilesMap.tileSize, y: 12 * tilesMap.tileSize }
+    heroAsset.index = 1
     this.addAsset(heroAsset)
+
+    worldMapData.layers.forEach((mapLayer, index) => {
+      const mapLayerAsset = new MapLayerAsset(`map-layer-${mapLayer.id}`, this.tilesAtlas, tilesMap)
+      mapLayerAsset.setTiles(mapLayer.data)
+      mapLayerAsset.index = index
+      this.addAsset(mapLayerAsset)
+    })
 
     this.followAsset('Rectangle')
     super.load(context)

@@ -52,18 +52,27 @@ function sortEntitiesByDistance(
   return sortedEntities
 }
 
+function canCollideByKind(source: CollideEntity, target: CollideEntity): boolean {
+  let canCollide = !Array.isArray(source.collideWith)
+  if (!canCollide) {
+    canCollide = typeof target.kind === 'string' && source.collideWith!.includes(target.kind)
+  }
+  return canCollide
+}
+
 export function getCollidedEntities(
-  sourceEntity: CollideEntity,
+  source: CollideEntity,
   entitiesToCheck: CollideEntity[],
 ): CollideEntity[] {
-  let collidedEntities = entitiesToCheck.filter(targetEntity => (
-    sourceEntity.type === CollideEntityTypes.rectangle &&
-    targetEntity.type === CollideEntityTypes.rectangle &&
+  let collidedEntities = entitiesToCheck.filter(target => (
+    canCollideByKind(source, target) &&
+    source.type === CollideEntityTypes.rectangle &&
+    target.type === CollideEntityTypes.rectangle &&
     areRectanglesOverlapping(
-      (sourceEntity as RectangleCollideEntity).data,
-      (targetEntity as RectangleCollideEntity).data,
+      (source as RectangleCollideEntity).data,
+      (target as RectangleCollideEntity).data,
     )
   ))
-  collidedEntities = sortEntitiesByDistance(sourceEntity, collidedEntities)
+  collidedEntities = sortEntitiesByDistance(source, collidedEntities)
   return collidedEntities
 }
