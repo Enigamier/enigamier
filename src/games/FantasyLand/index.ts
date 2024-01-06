@@ -1,5 +1,6 @@
 import { Enigamier } from '@/index'
 import { ExampleScene } from './scenes/ExampleScene'
+import { SproutLandsScene } from './scenes/SproutLands'
 import { WorldScene } from './scenes/WorldScene'
 
 export function fantasyLandGame(canvasId: string) {
@@ -7,7 +8,8 @@ export function fantasyLandGame(canvasId: string) {
   ;[
     new ExampleScene(),
     new WorldScene(),
+    new SproutLandsScene(),
   ].forEach(enigamier.registerScene.bind(enigamier))
 
-  enigamier.start('World')
+  enigamier.start('SproutLands')
 }

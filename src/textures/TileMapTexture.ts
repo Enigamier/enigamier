@@ -44,6 +44,7 @@ export class TileMapTexture extends Texture {
 
   public render(ctx: CanvasRenderingContext2D): void {
     if (this.tiles) {
+      ctx.imageSmoothingEnabled = false
       const { startRow, startCol, endRow, endCol } = this.visibleArea
       for (let r = startRow; r <= endRow; r++) {
         for (let c = startCol; c <= endCol; c++) {
