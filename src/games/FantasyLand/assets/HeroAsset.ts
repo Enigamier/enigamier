@@ -5,10 +5,9 @@ import type {
   KeyboardController,
   RectangleCollideEntity,
   TilesAnimationMap,
+  TilesAtlas,
 } from '@/index'
 import { CollideEntityTypes, TileObjectAsset, solidCollisionResolution } from '@/index'
-
-import atlasImageSrc from '../imgs/player-tiles.png'
 
 function getWalkingTiles(): TilesAnimationMap {
   return ['front', 'back', 'left', 'right'].reduce((map, dir, index) => {
@@ -45,15 +44,15 @@ const normalSpeed = 300
 const grassSpeed = 150
 
 export class HeroAsset extends TileObjectAsset {
-  public readonly id = 'HeroAsset'
+  declare public readonly id: string
 
   public movement: AssetMovement = { angle: 0, speed: normalSpeed }
 
   protected tilesAnimationsMap: TilesAnimationMap = {
-    standFront: { tiles: [1] },
-    standBack: { tiles: [5] },
-    standLeft: { tiles: [9] },
-    standRight: { tiles: [13] },
+    standFront: { tiles: [1, 2], interval: 400 },
+    standBack: { tiles: [5, 6], interval: 400 },
+    standLeft: { tiles: [9, 10], interval: 400 },
+    standRight: { tiles: [13, 14], interval: 400 },
     ...getWalkingTiles(),
   }
 
@@ -61,16 +60,9 @@ export class HeroAsset extends TileObjectAsset {
 
   private kbController!: KeyboardController
 
-  constructor() {
-    const atlasImage = new Image()
-    atlasImage.src = atlasImageSrc
-    const tilesAtlas = {
-      cols: 4,
-      rows: 4,
-      image: atlasImage,
-      tileSize: 16,
-    }
-    super(tilesAtlas)
+  constructor(id: string, atlas: TilesAtlas) {
+    super(atlas)
+    this.id = id
   }
 
   public get collideEntities(): [RectangleCollideEntity] {

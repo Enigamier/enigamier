@@ -1,17 +1,17 @@
-import type { SceneContext, RectSize, TilesMap, TilesAtlas } from '@/index'
+import type { SceneContext, RectSize, TilesAtlas } from '@/index'
 import { ScrollableScene } from '@/index'
 
-import { MapLayerAsset } from './assets/MapLayerAsset'
-import atlasImageSrc from './imgs/terrain.png'
-import worldMapData from './maps/world-map.json'
-import { RectangleAsset } from '../assets/Rectangle'
-import { HeroAsset } from './assets/HeroAsset'
+import { getTileAtlasFromData, getTileMapFromData } from '../../utils/parsers'
+import type { TileAtlasInfo } from '../../utils/models'
+import { MapLayerAsset } from '../../assets/MapLayerAsset'
+import { HeroAsset } from '../../assets/HeroAsset'
 
-const tilesMap: TilesMap = {
-  rows: 45,
-  cols: 52,
-  tileSize: 48,
-}
+import atlasImageSrc from './imgs/terrain.png'
+import tilesetData from './tilesets/terrain.json'
+import heroAtlasImageSrc from './imgs/player-tiles.png'
+import worldMapData from './maps/world-map.json'
+
+const tilesMap = getTileMapFromData(worldMapData, 37)
 
 export class WorldScene extends ScrollableScene {
   public readonly id = 'World'
@@ -21,58 +21,47 @@ export class WorldScene extends ScrollableScene {
     height: tilesMap.tileSize * tilesMap.rows,
   }
 
-  private readonly tilesAtlas: TilesAtlas
+  private readonly tilesAtlas: TileAtlasInfo
+
+  private readonly heroTileAtlas: TilesAtlas
 
   constructor() {
     super()
-    const atlasImage = new Image()
-    atlasImage.src = atlasImageSrc
-    this.tilesAtlas = {
-      cols: 6,
-      rows: 8,
-      image: atlasImage,
+    this.tilesAtlas = getTileAtlasFromData(tilesetData, atlasImageSrc)
+    const heroAtlasImage = new Image()
+    heroAtlasImage.src = heroAtlasImageSrc
+    this.heroTileAtlas = {
+      cols: 4,
+      rows: 4,
+      image: heroAtlasImage,
       tileSize: 16,
     }
   }
 
   public load(context: SceneContext): void {
     const { width, height } = this.mapSize
-    const rectanglesScope = {
+    const floorScope = {
       startX: 0,
       startY: 0,
       endX: width,
       endY: height,
     }
-    const firstRectangleAsset = new RectangleAsset({
-      up: 'ArrowUp',
-      down: 'ArrowDown',
-      left: 'ArrowLeft',
-      right: 'ArrowRight',
-    })
-    firstRectangleAsset.id = 'Rectangle'
-    firstRectangleAsset.texture.color = 'darkgreen'
-    firstRectangleAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
-    firstRectangleAsset.position = { x: 16 * tilesMap.tileSize, y: 12 * tilesMap.tileSize }
-    firstRectangleAsset.index = 1
-    firstRectangleAsset.movement.speed = 300
-    firstRectangleAsset.scope = rectanglesScope
-    this.addAsset(firstRectangleAsset)
 
-    const heroAsset = new HeroAsset()
+    const heroAsset = new HeroAsset('Hero', this.heroTileAtlas)
     heroAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
-    heroAsset.scope = rectanglesScope
+    heroAsset.scope = floorScope
     heroAsset.position = { x: 13 * tilesMap.tileSize, y: 12 * tilesMap.tileSize }
     heroAsset.index = 1
     this.addAsset(heroAsset)
 
-    worldMapData.layers.forEach((mapLayer, index) => {
-      const mapLayerAsset = new MapLayerAsset(`map-layer-${mapLayer.id}`, this.tilesAtlas, tilesMap)
+    tilesMap.layers.forEach((mapLayer, index) => {
+      const mapLayerAsset = new MapLayerAsset(`map-layer-${index}`, this.tilesAtlas, tilesMap)
       mapLayerAsset.setTiles(mapLayer.data)
       mapLayerAsset.index = index
       this.addAsset(mapLayerAsset)
     })
 
-    this.followAsset('Rectangle')
+    this.followAsset('Hero')
     super.load(context)
   }
 }
