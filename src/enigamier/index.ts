@@ -4,9 +4,13 @@ import { GlobalController } from '@/controllers/GlobalController'
 
 interface EnigamierOptions {
   autoResize: boolean;
+  imageSmoothingEnabled: boolean;
 }
 
-const defaultOptions: EnigamierOptions = { autoResize: false }
+const defaultOptions: EnigamierOptions = {
+  autoResize: false,
+  imageSmoothingEnabled: false,
+}
 
 export class Enigamier {
   public canvas!: HTMLCanvasElement
@@ -26,7 +30,6 @@ export class Enigamier {
   constructor(canvasId: string, options?: EnigamierOptions) {
     this.initCanvas(canvasId)
     this.options = this.mergeDefaultOptions(options)
-    console.log(this.options)
     this.renderer = new Renderer(this.onRender.bind(this), this.onUpdate.bind(this))
     this.globalController = new GlobalController(this.canvas)
     this.globalController.init()
@@ -102,6 +105,7 @@ export class Enigamier {
   private onRender() {
     if (this.currentScene) {
       this.clearCanvas()
+      this.canvasContext.imageSmoothingEnabled = this.options.imageSmoothingEnabled
       this.currentScene.render()
     }
   }

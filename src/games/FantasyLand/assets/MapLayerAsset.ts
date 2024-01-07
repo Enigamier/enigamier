@@ -1,14 +1,20 @@
-import { CollideEntityTypes, TileMapAsset } from '@/index'
-import type { RectangleCollideEntity, TilesMap } from '@/index'
+import { CollideEntityTypes, TileMapAsset, ClockInterval } from '@/index'
+import type { RectangleCollideEntity, TilesAnimationInfo, TilesMap } from '@/index'
 
 import type { TileAtlasInfo, TileObjectData } from '../utils/models'
 
 export class MapLayerAsset extends TileMapAsset {
-  public id: string
+  declare public id: string
+
+  public visible = true
+
+  public type?: string
 
   private mapCollisionEntities: RectangleCollideEntity[] = []
 
   private readonly atlas: TileAtlasInfo
+
+  private tilesAnimationsTimers: Record<number, { clock: ClockInterval; index: number }> = {}
 
   constructor(id: string, atlas: TileAtlasInfo, map: TilesMap) {
     super(atlas, map)
@@ -18,6 +24,21 @@ export class MapLayerAsset extends TileMapAsset {
 
   public get collideEntities(): RectangleCollideEntity[] {
     return this.mapCollisionEntities
+  }
+
+  private get tilesAnimationsMap(): Record<number, TilesAnimationInfo> {
+    const tilesAnimationsMap: Record<number, TilesAnimationInfo> = {}
+    if (Array.isArray(this.atlas.tilesData)) {
+      this.atlas.tilesData
+        .filter(tileInfo => tileInfo.animation && tileInfo.animation.length > 0)
+        .forEach(tileInfo => {
+          tilesAnimationsMap[tileInfo.id] = {
+            interval: tileInfo.animation![0].duration,
+            tiles: tileInfo.animation!.map(frame => frame.tileid),
+          }
+        })
+    }
+    return tilesAnimationsMap
   }
 
   private get tileCollisionObjectsMap(): Record<number, TileObjectData[]> {
@@ -40,9 +61,43 @@ export class MapLayerAsset extends TileMapAsset {
     return tilesEntitiesMap
   }
 
+  public update(delta: number): void {
+    if (this.visible) {
+      Object.values(this.tilesAnimationsTimers).forEach(({ clock }) => clock.check(delta))
+    }
+    this.visible = true
+  }
+
+  public render(ctx: CanvasRenderingContext2D): void {
+    if (this.visible) {
+      super.render(ctx)
+    }
+  }
+
   public setTiles(tiles: number[]) {
     this.texture.tiles = tiles
     this.updateMapCollideEntities()
+    this.startTilesAnimations()
+  }
+
+  private startTilesAnimations(): void {
+    this.tilesAnimationsTimers = {}
+    Object.entries(this.tilesAnimationsMap).forEach(([id, animation]) => {
+      this.tilesAnimationsTimers[parseInt(id)] = {
+        clock: new ClockInterval(animation.interval!, () => this.incrementTileAnimation(parseInt(id))),
+        index: 0,
+      }
+    })
+  }
+
+  private incrementTileAnimation(id: number) {
+    const { tiles } = this.tilesAnimationsMap[id]
+    const { index } = this.tilesAnimationsTimers[id]
+    const nextIndex = (index + 1) % tiles.length
+    const fromTile = tiles[index] + 1
+    const targetTile = tiles[nextIndex] + 1
+    this.tilesAnimationsTimers[id].index = nextIndex
+    this.texture.tiles = this.texture.tiles.map(tile => tile === fromTile ? targetTile : tile)
   }
 
   private updateMapCollideEntities() {

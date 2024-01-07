@@ -18,7 +18,7 @@ export abstract class TileObjectAsset extends Asset {
 
   protected tilesAnimationId = 'default'
 
-  private currentTilesAnimationIndex = 0
+  protected currentTilesAnimationIndex = 0
 
   private tilesAnimationClock: ClockInterval | undefined
 
@@ -28,6 +28,10 @@ export abstract class TileObjectAsset extends Asset {
 
   protected get tilesAnimation() {
     return this.tilesAnimationsMap[this.tilesAnimationId]
+  }
+
+  protected get tileSizeDelta(): number {
+    return this.texture.size.height / this.texture.atlas.tileSize
   }
 
   public load(context: AssetContext): void {

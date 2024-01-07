@@ -10,8 +10,12 @@ export interface TileObjectData {
 
 export interface TileData {
   id: number;
+  animation?: {
+    duration: number;
+    tileid: number;
+  }[];
   objectgroup?: {
-    id: number;
+    id?: number;
     objects: TileObjectData[];
   };
 }
@@ -31,7 +35,9 @@ export interface TileMapData {
   tileheight: number;
   layers: {
     name: string;
+    visible: boolean;
     data: number[];
+    class?: string;
   }[];
 }
 

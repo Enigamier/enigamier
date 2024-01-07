@@ -6,10 +6,14 @@ export class GlobalController {
 
   private readonly canvas: HTMLCanvasElement
 
-  private abortController: AbortController = new AbortController()
+  private readonly abortController: AbortController = new AbortController()
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas
+  }
+
+  public get abortSignal() {
+    return this.abortController.signal
   }
 
   public init() {
@@ -19,7 +23,6 @@ export class GlobalController {
 
   public shutdown() {
     this.abortController.abort()
-    this.abortController = new AbortController()
   }
 
   public installController<T = Controller>(controller: T) {
