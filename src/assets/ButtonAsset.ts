@@ -1,9 +1,9 @@
 import type { AssetContext, MouseController, MouseEventPayload, Texture } from '@/index'
-import { Asset } from '@/index'
+import { BaseAsset } from './BaseAsset'
 
 export type ButtonAssetClickCallback = () => void
 
-export abstract class ButtonAsset extends Asset {
+export abstract class ButtonAsset extends BaseAsset {
   public isDisabled = false
 
   protected isHover = false
