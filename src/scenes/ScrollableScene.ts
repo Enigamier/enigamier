@@ -32,18 +32,19 @@ export abstract class ScrollableScene extends Scene {
   }
 
   protected get sortedAssetsInCameraByTexture(): Asset[] {
-    return this.sortedAssetsByTexture.filter(({ globalCoords }) => {
+    return this.sortedAssetsByIndex.filter(({ globalCoords }) => {
       return areRectanglesOverlapping(this.cameraScope, globalCoords)
     })
   }
 
+  protected get assetsContext(): AssetContext {
+    return { gc: this.context.gc, camera: this.camera }
+  }
+
   public load(context: SceneContext) {
-    this.context = context
-    this.initCamera()
-    this.initBgTexture()
-    const assetContext: AssetContext = { gc: context.gc, camera: this.camera }
-    Object.values(this.assets).forEach(asset => asset.load(assetContext))
-    this.loaded = true
+    const { width, height } = context.enigamier.canvas
+    this.initCamera(width, height)
+    super.load(context)
   }
 
   public update(delta: number): void {
@@ -91,9 +92,7 @@ export abstract class ScrollableScene extends Scene {
     }
   }
 
-  private initCamera() {
-    const { canvas: { width, height } } = this.context.enigamier
-
+  private initCamera(width: number, height: number) {
     this.camera.width = width
     this.camera.height = height
     this.camera.maxX = this.mapSize.width - width
