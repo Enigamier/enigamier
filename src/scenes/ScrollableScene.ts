@@ -34,7 +34,7 @@ export abstract class ScrollableScene extends Scene {
   protected get sortedAssetsInCameraByTexture(): Asset[] {
     return this.sortedAssetsByIndex.filter(({ globalCoords }) => {
       return areRectanglesOverlapping(this.cameraScope, globalCoords)
-    })
+    }) as Asset[]
   }
 
   protected get assetsContext(): AssetContext {
@@ -59,6 +59,7 @@ export abstract class ScrollableScene extends Scene {
     ctx.translate(-this.camera.x, -this.camera.y)
     this.sortedAssetsInCameraByTexture.forEach(this.renderAsset.bind(this))
     ctx.restore()
+    this.hud?.render()
   }
 
   protected moveCamera(x: number, y: number) {

@@ -1,6 +1,7 @@
-import type { BaseAssetContext } from '@/assets/BaseAsset'
-import type { Asset } from '@/index'
-import { type Enigamier, type GlobalController, type Texture } from '@/index'
+import type { BaseAsset, BaseAssetContext } from '@/assets/BaseAsset'
+import type { Enigamier } from '@/enigamier'
+import type { GlobalController } from '@/controllers'
+import type { Texture } from '@/textures'
 
 export interface BaseSceneContext {
   enigamier: Enigamier;
@@ -11,11 +12,11 @@ export interface BaseSceneContext {
 export abstract class BaseScene {
   public abstract readonly id: string
 
-  protected context!: SceneContext
+  protected context!: BaseSceneContext
 
   protected loaded = false
 
-  protected assets: Record<string, Asset> = {}
+  protected assets: Record<string, BaseAsset> = {}
 
   protected bgTexture?: Texture
 
@@ -23,7 +24,7 @@ export abstract class BaseScene {
     return Object.values(this.assets)
   }
 
-  protected get sortedAssetsByIndex(): Asset[] {
+  protected get sortedAssetsByIndex() {
     return this.assetsList.sort((assetA, assetB) => assetA.index - assetB.index)
   }
 
@@ -31,10 +32,10 @@ export abstract class BaseScene {
     return { gc: this.context.gc }
   }
 
-  public load(context: SceneContext) {
+  public load(context: BaseSceneContext) {
     this.context = context
     this.initBgTexture()
-    Object.values(this.assets).forEach(asset => asset.load(this.assetsContext))
+    this.assetsList.forEach(this.loadAsset.bind(this))
     this.loaded = true
   }
 
@@ -52,14 +53,18 @@ export abstract class BaseScene {
     this.sortedAssetsByIndex.forEach(this.renderAsset.bind(this))
   }
 
-  protected addAsset(asset: Asset) {
-    this.loaded && asset.load({ gc: this.context.gc })
+  protected addAsset(asset: BaseAsset) {
+    this.loaded && this.loadAsset(asset)
     this.assets[asset.id] = asset
   }
 
-  protected removeAsset(asset: Asset) {
+  protected removeAsset(asset: BaseAsset) {
     asset.unload()
     delete this.assets[asset.id]
+  }
+
+  protected loadAsset(asset: BaseAsset) {
+    asset.load(this.assetsContext)
   }
 
   protected updateAssets(delta: number) {
@@ -75,7 +80,7 @@ export abstract class BaseScene {
     }
   }
 
-  protected renderAsset(asset: Asset) {
+  protected renderAsset(asset: BaseAsset) {
     asset.render(this.context.canvasContext)
   }
 

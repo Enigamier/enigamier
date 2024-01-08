@@ -1,4 +1,4 @@
-import type { SceneContext, RectSize, TilesAtlas } from '@/index'
+import type { SceneContext, RectSize, TilesAtlas, HudScene } from '@/index'
 import { ScrollableScene } from '@/index'
 
 import { getTileAtlasFromData, getTileMapFromData } from '../../utils/parsers'
@@ -11,11 +11,14 @@ import heroTilesetImageSrc from './imgs/hero-tileset.png'
 import tilesetData from './tilesets/terrain.json'
 import mapData from './maps/main.json'
 import { SproutDoorAsset } from './assets/SproutDoor'
+import { SproutHudScene } from './SproutHud'
 
 const tilesMap = getTileMapFromData(mapData)
 
 export class SproutLandsScene extends ScrollableScene {
   public readonly id = 'SproutLands'
+
+  protected hud: HudScene = new SproutHudScene()
 
   protected mapSize: RectSize = {
     width: tilesMap.tileSize * tilesMap.cols,
