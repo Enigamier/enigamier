@@ -51,16 +51,11 @@ export class SproutLandsScene extends ScrollableScene {
       endY: height - (3 * tilesMap.tileSize),
     }
 
-    const doorAsset = new SproutDoorAsset('Door')
-    doorAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
-    const doorStartX = 15 * tilesMap.tileSize
-    const doorStartY = 43 * tilesMap.tileSize
-    doorAsset.scope = {
-      startX: doorStartX,
-      startY: doorStartY,
-      endX: doorStartX + tilesMap.tileSize,
-      endY: doorStartY + tilesMap.tileSize,
+    const doorPosition = {
+      x: 15 * tilesMap.tileSize,
+      y: 43 * tilesMap.tileSize,
     }
+    const doorAsset = new SproutDoorAsset('Door', doorPosition, tilesMap.tileSize)
     doorAsset.index = 4
     this.addAsset(doorAsset)
 

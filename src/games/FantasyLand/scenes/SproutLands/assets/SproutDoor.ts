@@ -1,4 +1,4 @@
-import type { RectangleCollideEntity, TilesAnimationMap, TilesAtlas } from '@/index'
+import type { PointCoords, RectangleCollideEntity, TilesAnimationMap, TilesAtlas } from '@/index'
 import { CollideEntityTypes } from '@/index'
 
 import { DoorAsset } from '../../../assets/DoorAsset'
@@ -17,18 +17,23 @@ export class SproutDoorAsset extends DoorAsset {
     close: { tiles: [2, 3, 1], interval: 200 },
   }
 
-  constructor(id: string) {
-    super(SproutDoorAsset.getAtlas())
+  constructor(id: string, globalPos: PointCoords, size: number) {
+    super(SproutDoorAsset.getAtlas(), globalPos, size)
     this.id = id
   }
 
-  public get collideEntities(): [RectangleCollideEntity] {
+  public get collideEntities(): RectangleCollideEntity[] {
     const { startY } = this.globalCoords
     return [
       {
         type: CollideEntityTypes.rectangle,
         kind: 'door',
         data: { ...this.globalCoords, startY: startY + (9 * this.tileSizeDelta) },
+      },
+      {
+        type: CollideEntityTypes.rectangle,
+        kind: 'door-zone',
+        data: this.scope,
       },
     ]
   }

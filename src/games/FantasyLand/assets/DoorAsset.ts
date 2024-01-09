@@ -1,4 +1,4 @@
-import type { RectangleCollideEntity } from '@/index'
+import type { PointCoords, RectangleCollideEntity, TilesAtlas } from '@/index'
 import { CollideEntityTypes, TileObjectAsset } from '@/index'
 
 export abstract class DoorAsset extends TileObjectAsset {
@@ -6,12 +6,32 @@ export abstract class DoorAsset extends TileObjectAsset {
 
   public tilesAnimationId = 'closed'
 
-  public get collideEntities(): [RectangleCollideEntity] {
+  protected actionOffsetDelta = .3
+
+  constructor(atlas: TilesAtlas, globalPos: PointCoords, size: number) {
+    super(atlas)
+    this.texture.size = { width: size, height: size }
+    const actionOffset = Math.round((size * this.actionOffsetDelta) / 2)
+    this.scope = {
+      startX: globalPos.x - actionOffset,
+      startY: globalPos.y - actionOffset,
+      endX: globalPos.x + size + actionOffset,
+      endY: globalPos.y + size + actionOffset,
+    }
+    this.position = { x: actionOffset, y: actionOffset }
+  }
+
+  public get collideEntities(): RectangleCollideEntity[] {
     return [
       {
         type: CollideEntityTypes.rectangle,
         kind: 'door',
         data: this.globalCoords,
+      },
+      {
+        type: CollideEntityTypes.rectangle,
+        kind: 'door-zone',
+        data: this.scope,
       },
     ]
   }

@@ -75,7 +75,7 @@ export class HeroAsset extends TileObjectAsset {
       {
         type: CollideEntityTypes.rectangle,
         kind: 'hero',
-        collideWith: ['wall', 'grass', 'door', 'house'],
+        collideWith: ['wall', 'grass', 'door', 'house', 'door-zone'],
         data: this.globalCoords,
       },
     ]
@@ -125,11 +125,10 @@ export class HeroAsset extends TileObjectAsset {
       solidCollisionResolution(this, source, target)
     } else if (target.kind === 'grass') {
       this.movement.speed = grassSpeed
-    } else if (target.kind === 'door') {
+    } else if (target.kind === 'door-zone') {
       (asset as DoorAsset).colliding = true
-      if ((asset as DoorAsset).tilesAnimationId !== 'opened') {
-        solidCollisionResolution(this, source, target)
-      }
+    } else if (target.kind === 'door' && (asset as DoorAsset).tilesAnimationId !== 'opened') {
+      solidCollisionResolution(this, source, target)
     }
     this.onCollideCallback && this.onCollideCallback(target.kind)
   }
