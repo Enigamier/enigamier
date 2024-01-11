@@ -78,7 +78,15 @@ module.exports = {
     'array-callback-return': 'error',
     'prefer-arrow-callback': 'error',
     'prefer-template': 'error',
-    '@typescript-eslint/no-unused-vars': ['error', { vars: 'all', args: 'after-used', ignoreRestSiblings: true }],
+    '@typescript-eslint/no-unused-vars': [
+      'error',
+      {
+        vars: 'all',
+        args: 'after-used',
+        ignoreRestSiblings: true,
+        destructuredArrayIgnorePattern: '^_',
+      },
+    ],
     '@typescript-eslint/consistent-type-imports': 'error',
     '@typescript-eslint/naming-convention': 'error',
     '@typescript-eslint/restrict-template-expressions': 'error',

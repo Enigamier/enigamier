@@ -1,32 +1,12 @@
 import type {
   AssetContext,
-  AssetMovement,
   CollisionInfo,
   KeyboardController,
   RectangleCollideEntity,
-  TilesAnimationMap,
-  TilesAtlas,
 } from '@/index'
 import { CollideEntityTypes, TileObjectAsset, solidCollisionResolution } from '@/index'
 
 import type { DoorAsset } from './DoorAsset'
-
-function getWalkingTiles(): TilesAnimationMap {
-  return ['front', 'back', 'left', 'right'].reduce((map, dir, index) => {
-    const start = (index * 4) + 2
-    return {
-      ...map,
-      [`walking${dir[0].toUpperCase()}${dir.slice(1)}`]: {
-        interval: 200,
-        tiles: [start, start + 1, start, start + 2],
-      },
-    }
-  }, {})
-}
-
-function getAnimationDirFromId(id: string): string {
-  return id.replace(/(stand)|(walking)/g, '').toLowerCase()
-}
 
 interface HeroMoveKeys {
   up: string;
@@ -42,40 +22,17 @@ const moveKeys: HeroMoveKeys = {
   right: 'd',
 }
 
-const normalSpeed = 300
-const grassSpeed = 150
+export abstract class HeroAsset extends TileObjectAsset {
+  protected tilesAnimationId = 'stand-front'
 
-export class HeroAsset extends TileObjectAsset {
-  declare public readonly id: string
-
-  public movement: AssetMovement = { angle: 0, speed: normalSpeed }
-
-  protected tilesAnimationsMap: TilesAnimationMap = {
-    standFront: { tiles: [1, 2], interval: 400 },
-    standBack: { tiles: [5, 6], interval: 400 },
-    standLeft: { tiles: [9, 10], interval: 400 },
-    standRight: { tiles: [13, 14], interval: 400 },
-    ...getWalkingTiles(),
-  }
-
-  protected tilesAnimationId = 'standFront'
-
-  private kbController!: KeyboardController
-
-  private readonly onCollideCallback?: (kind?: string) => void
-
-  constructor(id: string, atlas: TilesAtlas, onCollide?: (kind?: string) => void) {
-    super(atlas)
-    this.id = id
-    this.onCollideCallback = onCollide
-  }
+  protected kbController!: KeyboardController
 
   public get collideEntities(): [RectangleCollideEntity] {
     return [
       {
         type: CollideEntityTypes.rectangle,
         kind: 'hero',
-        collideWith: ['wall', 'grass', 'door', 'house', 'door-zone'],
+        collideWith: ['wall', 'door', 'door-zone'],
         data: this.globalCoords,
       },
     ]
@@ -111,31 +68,28 @@ export class HeroAsset extends TileObjectAsset {
           right: isRight,
         }
         const newDirEntry = Object.entries(newDirMap).find(dirEntry => dirEntry[1])!
-        newAnimationId = this.getNewAnimationId(newDirEntry[0])
+        newAnimationId = this.getNewAnimationId('walking', newDirEntry[0])
       }
     }
     if (newAnimationId !== this.tilesAnimationId) {
       this.setTilesAnimation(newAnimationId)
     }
-    this.movement.speed = normalSpeed
   }
 
   public onCollide({ asset, source, target }: CollisionInfo): void {
     if (target.kind === 'wall') {
       solidCollisionResolution(this, source, target)
-    } else if (target.kind === 'grass') {
-      this.movement.speed = grassSpeed
     } else if (target.kind === 'door-zone') {
       (asset as DoorAsset).colliding = true
     } else if (target.kind === 'door' && (asset as DoorAsset).tilesAnimationId !== 'opened') {
       solidCollisionResolution(this, source, target)
     }
-    this.onCollideCallback && this.onCollideCallback(target.kind)
   }
 
-  private getNewAnimationId(walkingDir?: string) {
-    const newDir = walkingDir ?? getAnimationDirFromId(this.tilesAnimationId)
-    const mode = walkingDir ? 'walking' : 'stand'
-    return `${mode}${newDir[0].toUpperCase()}${newDir.slice(1)}`
+  protected getNewAnimationId(newMode?: string, newDir?: string) {
+    const [oldMode, oldDir, ...rest] = this.tilesAnimationId.split('-')
+    const mode = newMode ?? (oldMode !== 'action' ? 'stand' : 'action')
+    const dir = newDir ?? oldDir
+    return [mode, dir, ...rest].join('-')
   }
 }

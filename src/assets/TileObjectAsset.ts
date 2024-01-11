@@ -59,12 +59,18 @@ export abstract class TileObjectAsset extends Asset {
     }
   }
 
+  protected onTilesAnimationEnds?(): void
+
   private updateAnimationTile() {
     this.texture.tile = this.tilesAnimation.tiles[this.currentTilesAnimationIndex]
   }
 
   private incrementAnimationTile() {
+    const animationEnds = this.currentTilesAnimationIndex + 1 === this.tilesAnimation.tiles.length
     this.currentTilesAnimationIndex = (this.currentTilesAnimationIndex + 1) % this.tilesAnimation.tiles.length
     this.updateAnimationTile()
+    if (animationEnds && this.onTilesAnimationEnds) {
+      this.onTilesAnimationEnds()
+    }
   }
 }

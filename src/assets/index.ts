@@ -1,4 +1,4 @@
-export * from './Asset'
+export * from './BaseAsset'
 export * from './Asset'
 export * from './HitboxAsset'
 export * from './TileObjectAsset'

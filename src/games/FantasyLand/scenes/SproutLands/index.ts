@@ -1,17 +1,16 @@
-import type { SceneContext, RectSize, TilesAtlas, HudScene } from '@/index'
+import type { SceneContext, RectSize, HudScene } from '@/index'
 import { ScrollableScene } from '@/index'
 
 import { getTileAtlasFromData, getTileMapFromData } from '../../utils/parsers'
 import type { TileAtlasInfo } from '../../utils/models'
 import { MapLayerAsset } from '../../assets/MapLayerAsset'
-import { HeroAsset } from '../../assets/HeroAsset'
 
 import terrainTilesetImageSrc from './imgs/terrain-tileset.png'
-import heroTilesetImageSrc from './imgs/hero-tileset.png'
 import tilesetData from './tilesets/terrain.json'
 import mapData from './maps/main.json'
 import { SproutDoorAsset } from './assets/SproutDoor'
-import { SproutHudScene } from './SproutHud'
+import { SproutHeroAsset } from './assets/Hero'
+import { SproutHudScene } from './hud'
 
 const tilesMap = getTileMapFromData(mapData)
 
@@ -27,29 +26,13 @@ export class SproutLandsScene extends ScrollableScene {
 
   private readonly tilesAtlas: TileAtlasInfo
 
-  private readonly heroTileAtlas: TilesAtlas
-
   constructor() {
     super()
     this.tilesAtlas = getTileAtlasFromData(tilesetData, terrainTilesetImageSrc)
-    const heroAtlasImage = new Image()
-    heroAtlasImage.src = heroTilesetImageSrc
-    this.heroTileAtlas = {
-      cols: 4,
-      rows: 4,
-      image: heroAtlasImage,
-      tileSize: 16,
-    }
   }
 
   public load(context: SceneContext): void {
     const { width, height } = this.mapSize
-    const floorScope = {
-      startX: 3 * tilesMap.tileSize,
-      startY: 2 * tilesMap.tileSize,
-      endX: width - (3 * tilesMap.tileSize),
-      endY: height - (3 * tilesMap.tileSize),
-    }
 
     const doorPosition = {
       x: 15 * tilesMap.tileSize,
@@ -59,9 +42,9 @@ export class SproutLandsScene extends ScrollableScene {
     doorAsset.index = 4
     this.addAsset(doorAsset)
 
-    const heroAsset = new HeroAsset('Hero', this.heroTileAtlas, this.onHeroCollide.bind(this))
-    heroAsset.texture.size = { width: tilesMap.tileSize, height: tilesMap.tileSize }
-    heroAsset.scope = floorScope
+    const heroAsset = new SproutHeroAsset(this.onHeroCollide.bind(this))
+    heroAsset.texture.size = { width: tilesMap.tileSize * 3, height: tilesMap.tileSize * 3 }
+    heroAsset.scope = { ...heroAsset.scope, endX: width, endY: height }
     heroAsset.position = { x: 13 * tilesMap.tileSize, y: 12 * tilesMap.tileSize }
     heroAsset.index = 3
     this.addAsset(heroAsset)
@@ -75,15 +58,15 @@ export class SproutLandsScene extends ScrollableScene {
       this.addAsset(mapLayerAsset)
     })
 
-    this.followAsset('Hero')
+    this.followAsset('SproutHero')
     super.load(context)
   }
 
   private onHeroCollide(kind?: string) {
     if (kind === 'house') {
-      (this.assetsList as MapLayerAsset[])
-        .filter(layer => layer.type === 'roof')
-        .forEach(layer => layer.visible = false)
+      this.assetsList
+        .filter(layer => layer instanceof MapLayerAsset && layer.type === 'roof')
+        .forEach(layer => (layer as MapLayerAsset).visible = false)
     }
   }
 }
