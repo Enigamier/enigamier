@@ -6,12 +6,12 @@ export abstract class DoorAsset extends TileObjectAsset {
 
   public tilesAnimationId = 'closed'
 
-  protected actionOffsetDelta = .3
+  protected actionOffsetDelta = .2
 
   constructor(atlas: TilesAtlas, globalPos: PointCoords, size: number) {
     super(atlas)
     this.texture.size = { width: size, height: size }
-    const actionOffset = Math.round((size * this.actionOffsetDelta) / 2)
+    const actionOffset = Math.round(size * this.actionOffsetDelta)
     this.scope = {
       startX: globalPos.x - actionOffset,
       startY: globalPos.y - actionOffset,
@@ -22,18 +22,12 @@ export abstract class DoorAsset extends TileObjectAsset {
   }
 
   public get collideEntities(): RectangleCollideEntity[] {
-    return [
-      {
-        type: CollideEntityTypes.rectangle,
-        kind: 'door',
-        data: this.globalCoords,
-      },
-      {
-        type: CollideEntityTypes.rectangle,
-        kind: 'door-zone',
-        data: this.scope,
-      },
-    ]
+    const type = CollideEntityTypes.rectangle
+    const entities = [{ type, kind: 'door', data: this.scope }]
+    if (this.tilesAnimationId !== 'opened') {
+      entities.push({ type, kind: 'wall', data: this.globalCoords })
+    }
+    return entities
   }
 
   public update(delta: number): void {

@@ -23,19 +23,14 @@ export class SproutDoorAsset extends DoorAsset {
   }
 
   public get collideEntities(): RectangleCollideEntity[] {
-    const { startY } = this.globalCoords
-    return [
-      {
-        type: CollideEntityTypes.rectangle,
-        kind: 'door',
-        data: { ...this.globalCoords, startY: startY + (9 * this.tileSizeDelta) },
-      },
-      {
-        type: CollideEntityTypes.rectangle,
-        kind: 'door-zone',
-        data: this.scope,
-      },
-    ]
+    const type = CollideEntityTypes.rectangle
+    const entities = [{ type, kind: 'door', data: this.scope }]
+    if (this.tilesAnimationId !== 'opened') {
+      const { startY } = this.globalCoords
+      const wallEntityScope = { ...this.globalCoords, startY: startY + (9 * this.tileSizeDelta) }
+      entities.push({ type, kind: 'wall', data: wallEntityScope })
+    }
+    return entities
   }
 
   private static getAtlas() {

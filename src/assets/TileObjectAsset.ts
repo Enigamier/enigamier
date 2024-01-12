@@ -5,8 +5,9 @@ import { Asset } from './Asset'
 import type { AssetContext } from './Asset'
 
 export interface TilesAnimationInfo {
-  interval?: number;
   tiles: number[];
+  interval?: number;
+  flip?: boolean;
 }
 
 export type TilesAnimationMap = Record<string, TilesAnimationInfo>
@@ -47,9 +48,10 @@ export abstract class TileObjectAsset extends Asset {
 
   public setTilesAnimation(id: string) {
     if (this.tilesAnimationsMap[id]) {
-      const { interval } = this.tilesAnimationsMap[id]
+      const { interval, flip } = this.tilesAnimationsMap[id]
       this.tilesAnimationId = id
       this.currentTilesAnimationIndex = 0
+      this.texture.flip = flip === true
       this.updateAnimationTile()
       if (interval) {
         this.tilesAnimationClock = new ClockInterval(interval, this.incrementAnimationTile.bind(this))

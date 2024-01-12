@@ -45,6 +45,12 @@ export abstract class BaseAsset {
     return { x: startX + x, y: startY + y }
   }
 
+  public get globalCenterPoint(): PointCoords {
+    const { x, y } = this.globalPosition
+    const { x: centerX, y: centerY } = this.texture.centerPoint
+    return { x: x + centerX, y: y + centerY }
+  }
+
   public get globalCoords(): RectCoords {
     const { x, y } = this.globalPosition
     const { size: { width, height } } = this.texture

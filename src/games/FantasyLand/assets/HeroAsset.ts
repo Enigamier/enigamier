@@ -2,9 +2,8 @@ import type {
   AssetContext,
   CollisionInfo,
   KeyboardController,
-  RectangleCollideEntity,
 } from '@/index'
-import { CollideEntityTypes, TileObjectAsset, solidCollisionResolution } from '@/index'
+import { TileObjectAsset, solidCollisionResolution } from '@/index'
 
 import type { DoorAsset } from './DoorAsset'
 
@@ -26,17 +25,6 @@ export abstract class HeroAsset extends TileObjectAsset {
   protected tilesAnimationId = 'stand-front'
 
   protected kbController!: KeyboardController
-
-  public get collideEntities(): [RectangleCollideEntity] {
-    return [
-      {
-        type: CollideEntityTypes.rectangle,
-        kind: 'hero',
-        collideWith: ['wall', 'door', 'door-zone'],
-        data: this.globalCoords,
-      },
-    ]
-  }
 
   private get moveKeysCodesMap() {
     return Object.values(moveKeys).reduce((codesMap, keyCode) => ({ ...codesMap, [keyCode]: true }), {})
@@ -79,10 +67,8 @@ export abstract class HeroAsset extends TileObjectAsset {
   public onCollide({ asset, source, target }: CollisionInfo): void {
     if (target.kind === 'wall') {
       solidCollisionResolution(this, source, target)
-    } else if (target.kind === 'door-zone') {
+    } else if (target.kind === 'door') {
       (asset as DoorAsset).colliding = true
-    } else if (target.kind === 'door' && (asset as DoorAsset).tilesAnimationId !== 'opened') {
-      solidCollisionResolution(this, source, target)
     }
   }
 

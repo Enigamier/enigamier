@@ -2,9 +2,11 @@ import { Texture } from './Texture'
 import type { TilesAtlas } from './TileMapTexture'
 
 export class TileObjectTexture extends Texture {
+  public readonly atlas: TilesAtlas
+
   public tile = 0
 
-  public readonly atlas: TilesAtlas
+  public flip = false
 
   constructor(atlas: TilesAtlas) {
     super()
@@ -14,6 +16,10 @@ export class TileObjectTexture extends Texture {
   public render(ctx: CanvasRenderingContext2D): void {
     if (this.tile) {
       const tileAtlasPos = this.getAtlasTilePos(this.tile - 1)
+      if (this.flip) {
+        ctx.translate(this.size.width, 0)
+        ctx.scale(-1, 1)
+      }
       ctx.drawImage(
         this.atlas.image,
         tileAtlasPos.x,

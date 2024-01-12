@@ -5,11 +5,14 @@ import { getTileAtlasFromData, getTileMapFromData } from '../../utils/parsers'
 import type { TileAtlasInfo } from '../../utils/models'
 import { MapLayerAsset } from '../../assets/MapLayerAsset'
 
+// import { gameData } from '../../game-data'
+
 import terrainTilesetImageSrc from './imgs/terrain-tileset.png'
 import tilesetData from './tilesets/terrain.json'
 import mapData from './maps/main.json'
 import { SproutDoorAsset } from './assets/SproutDoor'
 import { SproutHeroAsset } from './assets/Hero'
+import { CowAsset } from './assets/Cow'
 import { SproutHudScene } from './hud'
 
 const tilesMap = getTileMapFromData(mapData)
@@ -42,12 +45,29 @@ export class SproutLandsScene extends ScrollableScene {
     doorAsset.index = 4
     this.addAsset(doorAsset)
 
-    const heroAsset = new SproutHeroAsset(this.onHeroCollide.bind(this))
-    heroAsset.texture.size = { width: tilesMap.tileSize * 3, height: tilesMap.tileSize * 3 }
-    heroAsset.scope = { ...heroAsset.scope, endX: width, endY: height }
+    const heroScope = { startX: 0, startY: 0, endX: width, endY: height }
+    const heroAsset = new SproutHeroAsset(
+      tilesMap.tileSize * 3,
+      this.onHeroDie.bind(this),
+      this.onHeroCollide.bind(this),
+    )
+    heroAsset.scope = heroScope
     heroAsset.position = { x: 13 * tilesMap.tileSize, y: 12 * tilesMap.tileSize }
     heroAsset.index = 3
     this.addAsset(heroAsset)
+
+    const cowPosition = {
+
+      // x: 14.5 * tilesMap.tileSize,
+      // y: 43 * tilesMap.tileSize,
+      x: 16 * tilesMap.tileSize,
+      y: 13 * tilesMap.tileSize,
+    }
+    const cowAsset = new CowAsset('Cow', tilesMap.tileSize * 2)
+    cowAsset.scope = heroScope
+    cowAsset.position = cowPosition
+    cowAsset.index = 4
+    this.addAsset(cowAsset)
 
     tilesMap.layers.forEach((mapLayer, index) => {
       const mapLayerAsset = new MapLayerAsset(`map-layer-${index}`, this.tilesAtlas, tilesMap)
@@ -60,6 +80,10 @@ export class SproutLandsScene extends ScrollableScene {
 
     this.followAsset('SproutHero')
     super.load(context)
+  }
+
+  private onHeroDie() {
+    console.log('Hero died!')
   }
 
   private onHeroCollide(kind?: string) {
