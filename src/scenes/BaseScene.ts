@@ -1,12 +1,14 @@
-import type { BaseAsset, BaseAssetContext } from '@/assets/BaseAsset'
+import type { BaseAsset, BaseAssetContext } from '@/assets'
 import type { Enigamier } from '@/enigamier'
 import type { GlobalController } from '@/controllers'
 import type { Texture } from '@/textures'
+import type { AudioManager } from '@/managers'
 
 export interface BaseSceneContext {
   enigamier: Enigamier;
   canvasContext: CanvasRenderingContext2D;
   gc: GlobalController;
+  audioManager: AudioManager;
 }
 
 export abstract class BaseScene {

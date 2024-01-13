@@ -1,5 +1,4 @@
 export class ClockInterval {
-
   private lastCheck = 0
 
   private readonly tickLength: number

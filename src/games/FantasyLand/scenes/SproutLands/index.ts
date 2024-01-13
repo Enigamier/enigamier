@@ -5,8 +5,6 @@ import { getTileAtlasFromData, getTileMapFromData } from '../../utils/parsers'
 import type { TileAtlasInfo } from '../../utils/models'
 import { MapLayerAsset } from '../../assets/MapLayerAsset'
 
-// import { gameData } from '../../game-data'
-
 import terrainTilesetImageSrc from './imgs/terrain-tileset.png'
 import tilesetData from './tilesets/terrain.json'
 import mapData from './maps/main.json'

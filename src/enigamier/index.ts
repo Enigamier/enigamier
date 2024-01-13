@@ -1,10 +1,12 @@
-import type { Scene } from '@/scenes/Scene'
 import { Renderer } from '@/Renderer'
 import { GlobalController } from '@/controllers/GlobalController'
+import { AudioManager } from '@/managers'
+import type { Scene, SceneContext } from '@/scenes'
 
 interface EnigamierOptions {
   autoResize: boolean;
   imageSmoothingEnabled: boolean;
+  baseAudioNodesMap?: Record<string, AudioNode>;
 }
 
 const defaultOptions: EnigamierOptions = {
@@ -21,27 +23,41 @@ export class Enigamier {
 
   private scenes: Record<string, Scene> = {}
 
-  private currentScene: Scene | undefined
+  private currentScene?: Scene
 
   private readonly renderer: Renderer
 
   private readonly globalController: GlobalController
 
-  constructor(canvasId: string, options?: EnigamierOptions) {
+  private readonly audioManager: AudioManager
+
+  constructor(canvasId: string, options?: Partial<EnigamierOptions>) {
     this.initCanvas(canvasId)
     this.options = this.mergeDefaultOptions(options)
     this.renderer = new Renderer(this.onRender.bind(this), this.onUpdate.bind(this))
     this.globalController = new GlobalController(this.canvas)
+    this.audioManager = new AudioManager()
     this.globalController.init()
   }
 
+  private get sceneContext(): SceneContext {
+    return {
+      enigamier: this,
+      gc: this.globalController,
+      canvasContext: this.canvasContext,
+      audioManager: this.audioManager,
+    }
+  }
+
   public start(id: string) {
+    this.audioManager.init(this.options.baseAudioNodesMap)
     this.loadScene(id)
     this.renderer.start()
   }
 
   public shutdown() {
     this.unloadCurrentScene()
+    this.audioManager.shutdown()
     this.globalController.shutdown()
     this.renderer.stop()
   }
@@ -53,7 +69,7 @@ export class Enigamier {
   public loadScene(id: string) {
     this.unloadCurrentScene()
     const newScene = this.scenes[id]
-    newScene.load({ enigamier: this, gc: this.globalController, canvasContext: this.canvasContext })
+    newScene.load(this.sceneContext)
     this.currentScene = newScene
   }
 
@@ -84,9 +100,8 @@ export class Enigamier {
     }
   }
 
-  private mergeDefaultOptions(options?: EnigamierOptions) {
-    const newOptions = typeof options === 'object' ? options : {}
-    return { ...defaultOptions, ...newOptions }
+  private mergeDefaultOptions(options: Partial<EnigamierOptions> = {}) {
+    return { ...defaultOptions, ...options }
   }
 
   private unloadCurrentScene() {
