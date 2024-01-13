@@ -38,7 +38,7 @@ export abstract class ScrollableScene extends Scene {
   }
 
   protected get assetsContext(): AssetContext {
-    return { gc: this.context.gc, camera: this.camera }
+    return { ...super.assetsContext, camera: this.camera }
   }
 
   public load(context: SceneContext) {

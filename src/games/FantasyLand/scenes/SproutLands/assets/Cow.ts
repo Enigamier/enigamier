@@ -1,6 +1,7 @@
 import type {
   AssetContext,
   AssetMovement,
+  AudioEffectInfo,
   CollisionInfo,
   RectangleCollideEntity,
   TilesAnimationMap,
@@ -10,11 +11,13 @@ import { ClockInterval, CollideEntityTypes, TileObjectAsset, solidCollisionResol
 
 import type { SproutHeroAsset } from './Hero'
 import cowTilesetImageSrc from '../imgs/cow-tileset.png'
+import mooningCowAudioSrc from '../audio/mooing-cow.mp3'
 
 const actionOffsetDelta = 1
 const speed = 100
 const attackDamage = 1
 const attackInterval = 500
+const mooningInterval = 2000
 
 export class CowAsset extends TileObjectAsset {
   public readonly id: string
@@ -26,6 +29,8 @@ export class CowAsset extends TileObjectAsset {
   public attacking = false
 
   public attackingClock?: ClockInterval
+
+  public mooningClock?: ClockInterval
 
   protected tilesAnimationsMap: TilesAnimationMap = ['left', 'right'].reduce((map, dir) => {
     return {
@@ -44,6 +49,15 @@ export class CowAsset extends TileObjectAsset {
   }, {})
 
   protected tilesAnimationId = 'stand-right'
+
+  protected audioEffectsInfo: Record<string, AudioEffectInfo> = {
+    mooning: {
+      src: mooningCowAudioSrc,
+      loadDuration: .1,
+      offset: .4,
+      gain: .5,
+    },
+  }
 
   private static readonly atlas: TilesAtlas
 
@@ -84,7 +98,7 @@ export class CowAsset extends TileObjectAsset {
     ]
   }
 
-  public load(context: AssetContext): void {
+  public async load(context: AssetContext) {
     super.load(context)
   }
 
@@ -95,8 +109,11 @@ export class CowAsset extends TileObjectAsset {
 
     if (this.smelling) {
       this.move(delta)
+      this.mooningClock?.check(delta)
       const dir = Math.cos(this.movement.angle) > 0 ? 'right' : 'left'
       newAnimationId = `walking-${dir}`
+    } else if (this.mooningClock) {
+      delete this.mooningClock
     }
     this.smelling = false
 
@@ -121,7 +138,7 @@ export class CowAsset extends TileObjectAsset {
             if (!this.attackingClock) {
               this.attackingClock = new ClockInterval(
                 attackInterval,
-                () => (asset as SproutHeroAsset).hit(attackDamage),
+                this.hitHero.bind(this, asset as SproutHeroAsset),
               )
             }
             this.attacking = true
@@ -131,9 +148,20 @@ export class CowAsset extends TileObjectAsset {
         const { x: targetX, y: targetY } = asset.globalCenterPoint
         const { x, y } = this.globalCenterPoint
         this.movement.angle = (2 * Math.PI) - Math.atan2(targetY - y, targetX - x)
+        if (!this.mooningClock) {
+          this.playAudioEffect('mooning')
+          this.mooningClock = new ClockInterval(
+            mooningInterval,
+            () => this.playAudioEffect('mooning'),
+          )
+        }
         this.smelling = true
       }
     }
+  }
+
+  private hitHero(heroAsset: SproutHeroAsset) {
+    heroAsset.hit(attackDamage)
   }
 
   private static getAtlas() {

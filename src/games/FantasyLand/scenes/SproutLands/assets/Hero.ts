@@ -1,6 +1,7 @@
 import type {
   AssetContext,
   AssetMovement,
+  AudioEffectInfo,
   CollisionInfo,
   RectCoords,
   RectSize,
@@ -13,6 +14,8 @@ import { gameData } from '../../../game-data'
 import { HeroAsset } from '../../../assets/HeroAsset'
 
 import heroTilesetImageSrc from '../imgs/hero-tileset.png'
+import heroHitAudioSrc from '../audio/hero-hit.mp3'
+import heroDeathAudioSrc from '../audio/hero-death.mp3'
 
 function getAnimationTiles(): TilesAnimationMap {
   return ['front', 'back', 'left', 'right'].reduce((map, dir, index) => {
@@ -71,6 +74,19 @@ export class SproutHeroAsset extends HeroAsset {
     ...getActionAnimationTiles(),
   }
 
+  protected audioEffectsInfo: Record<string, AudioEffectInfo> = {
+    hit: {
+      src: heroHitAudioSrc,
+      loadOffset: .5,
+      offset: .3,
+    },
+    death: {
+      src: heroDeathAudioSrc,
+      loadOffset: 2,
+      duration: 1,
+    },
+  }
+
   private readonly onDieCallback: (kind?: string) => void
 
   private readonly onCollideCallback: (kind?: string) => void
@@ -122,7 +138,7 @@ export class SproutHeroAsset extends HeroAsset {
     }
   }
 
-  public load(context: AssetContext): void {
+  public async load(context: AssetContext) {
     super.load(context)
     this.kbController.addEventListener('keydown', this.onKeyDown.bind(this), this.abortController.signal)
   }
@@ -152,11 +168,13 @@ export class SproutHeroAsset extends HeroAsset {
     this.onCollideCallback && this.onCollideCallback(collisionInfo.target.kind)
   }
 
-  public hit(damage: number) {
+  public async hit(damage: number) {
     const { lifes } = gameData
     gameData.lifes = Math.max(lifes - damage, 0)
+    this.onDieCallback()
+    await this.playAudioEffect('hit')
     if (gameData.lifes === 0) {
-      this.onDieCallback()
+      await this.playAudioEffect('death')
     }
   }
 

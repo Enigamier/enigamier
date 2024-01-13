@@ -14,6 +14,14 @@ export class AudioManager {
     return this.audioContext
   }
 
+  public get gainNode(): GainNode {
+    return this.nodesMap.gain
+  }
+
+  public get pannerNode(): StereoPannerNode {
+    return this.nodesMap.panner
+  }
+
   private get nodes(): AudioNode[] {
     return Object.values(this.nodesMap)
   }
@@ -46,12 +54,24 @@ export class AudioManager {
     return track.mediaElement
   }
 
+  public async fetchAudioBuffer(src: string): Promise<AudioBuffer> {
+    const resp = await fetch(src)
+    const arrayBuffer = await resp.arrayBuffer()
+    return this.context.decodeAudioData(arrayBuffer)
+  }
+
   public async connectBufferSource(src: string | AudioBuffer): Promise<AudioBufferSourceNode> {
     const buffer: AudioBuffer = src instanceof AudioBuffer ? src : await this.fetchAudioBuffer(src)
     const track = this.context.createBufferSource()
     track.buffer = buffer
     this.connectNode(track)
     return track
+  }
+
+  public connectNode(nodeToConnect: AudioNode): AudioNode {
+    let connectedNode = nodeToConnect
+    this.nodes.forEach(node => connectedNode = connectedNode.connect(node))
+    return connectedNode
   }
 
   private initNodes(nodesMap: Record<string, AudioNode> = {}) {
@@ -66,17 +86,5 @@ export class AudioManager {
         node.connect(nodes[index + 1])
       }
     })
-  }
-
-  private connectNode(nodeToConnect: AudioNode): AudioNode {
-    let connectedNode = nodeToConnect
-    this.nodes.forEach(node => connectedNode = connectedNode.connect(node))
-    return connectedNode
-  }
-
-  private async fetchAudioBuffer(src: string): Promise<AudioBuffer> {
-    const resp = await fetch(src)
-    const arrayBuffer = await resp.arrayBuffer()
-    return this.context.decodeAudioData(arrayBuffer)
   }
 }

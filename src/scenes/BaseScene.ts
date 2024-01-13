@@ -1,20 +1,15 @@
 import type { BaseAsset, BaseAssetContext } from '@/assets'
 import type { Enigamier } from '@/enigamier'
-import type { GlobalController } from '@/controllers'
 import type { Texture } from '@/textures'
-import type { AudioManager } from '@/managers'
+import { GameObject, type GameObjectContext } from '@/enigamier/GameObject'
 
-export interface BaseSceneContext {
+export interface BaseSceneContext extends GameObjectContext {
   enigamier: Enigamier;
   canvasContext: CanvasRenderingContext2D;
-  gc: GlobalController;
-  audioManager: AudioManager;
 }
 
-export abstract class BaseScene {
-  public abstract readonly id: string
-
-  protected context!: BaseSceneContext
+export abstract class BaseScene extends GameObject {
+  declare protected context: BaseSceneContext
 
   protected loaded = false
 
@@ -31,11 +26,12 @@ export abstract class BaseScene {
   }
 
   protected get assetsContext(): BaseAssetContext {
-    return { gc: this.context.gc }
+    const { gc, audioManager } = this.context
+    return { gc, audioManager }
   }
 
   public load(context: BaseSceneContext) {
-    this.context = context
+    super.load(context)
     this.initBgTexture()
     this.assetsList.forEach(this.loadAsset.bind(this))
     this.loaded = true

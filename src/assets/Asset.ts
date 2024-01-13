@@ -3,6 +3,7 @@ import type {
   CollideEntity,
   CollisionInfo,
 } from '@/index'
+
 import { BaseAsset, type BaseAssetContext } from './BaseAsset'
 
 export interface AssetContext extends BaseAssetContext {

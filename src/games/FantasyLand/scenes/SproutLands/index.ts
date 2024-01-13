@@ -7,6 +7,7 @@ import { MapLayerAsset } from '../../assets/MapLayerAsset'
 
 import terrainTilesetImageSrc from './imgs/terrain-tileset.png'
 import tilesetData from './tilesets/terrain.json'
+import bgAudioSrc from './audio/lazy-village.mp3'
 import mapData from './maps/main.json'
 import { SproutDoorAsset } from './assets/SproutDoor'
 import { SproutHeroAsset } from './assets/Hero'
@@ -17,6 +18,10 @@ const tilesMap = getTileMapFromData(mapData)
 
 export class SproutLandsScene extends ScrollableScene {
   public readonly id = 'SproutLands'
+
+  protected bgAudioSrc = bgAudioSrc
+
+  protected bgAudioVolume = .2
 
   protected hud: HudScene = new SproutHudScene()
 

@@ -1,14 +1,13 @@
 import type {
-  GlobalController,
   Texture,
   RectCoords,
   PointCoords,
 } from '@/index'
+import type { GameObjectContext } from '@/enigamier/GameObject'
+import { GameObject } from '@/enigamier/GameObject'
 import { getVectorEndPoint } from '@/utils/vectors'
 
-export interface BaseAssetContext {
-  gc: GlobalController;
-}
+export type BaseAssetContext = GameObjectContext
 
 export interface AssetMovement {
   angle: number;
@@ -19,8 +18,8 @@ export interface AssetMovement {
   speed: number;
 }
 
-export abstract class BaseAsset {
-  public abstract readonly id: string
+export abstract class BaseAsset extends GameObject {
+  declare protected context: BaseAssetContext
 
   public index = 0
 
@@ -32,11 +31,10 @@ export abstract class BaseAsset {
 
   public movement: AssetMovement = { angle: 0, speed: 0 }
 
-  protected context!: BaseAssetContext
-
   protected abortController!: AbortController
 
   constructor(texture: Texture) {
+    super()
     this.texture = texture
   }
 
@@ -63,15 +61,13 @@ export abstract class BaseAsset {
   }
 
   public load(context: BaseAssetContext) {
-    this.context = context
+    super.load(context)
     this.abortController = new AbortController()
   }
 
   public unload() {
     this.abortController.abort()
   }
-
-  public update?(delta: number): void
 
   public render(ctx: CanvasRenderingContext2D): void {
     const { x, y } = this.globalPosition
