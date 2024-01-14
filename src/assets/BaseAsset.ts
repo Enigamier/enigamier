@@ -7,6 +7,8 @@ import type { GameObjectContext } from '@/enigamier/GameObject'
 import { GameObject } from '@/enigamier/GameObject'
 import { getVectorEndPoint } from '@/utils/vectors'
 
+type EventCallback = (payload: unknown) => void
+
 export type BaseAssetContext = GameObjectContext
 
 export interface AssetMovement {
@@ -32,6 +34,8 @@ export abstract class BaseAsset extends GameObject {
   public movement: AssetMovement = { angle: 0, speed: 0 }
 
   protected abortController!: AbortController
+
+  private listeners: Record<string, EventCallback[]> = {}
 
   constructor(texture: Texture) {
     super()
@@ -75,6 +79,22 @@ export abstract class BaseAsset extends GameObject {
     ctx.translate(x, y)
     this.texture.render(ctx)
     ctx.restore()
+  }
+
+  public addEventListener(eventId: string, callback: EventCallback, signal?: AbortSignal) {
+    this.listeners[eventId] = this.listeners[eventId] || []
+    this.listeners[eventId].push(callback)
+    if (signal) {
+      signal.addEventListener('abort', () => this.removeEventListener(eventId, callback))
+    }
+  }
+
+  public removeEventListener(eventId: string, callbackToRemove: EventCallback) {
+    this.listeners[eventId] = this.listeners[eventId].filter(callback => callback === callbackToRemove)
+  }
+
+  protected fireEvent(eventId: string, payload?: unknown) {
+    this.listeners[eventId]?.forEach(cb => cb(payload))
   }
 
   protected move(delta: number) {

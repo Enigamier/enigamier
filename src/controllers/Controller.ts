@@ -1,4 +1,5 @@
 type EventCallback<T> = (payload: T) => void
+
 export interface GlobalListenerInfo<T> {
   event: string;
   element: HTMLElement;

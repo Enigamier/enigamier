@@ -1,11 +1,11 @@
-import type { SceneContext, RectSize, HudScene, CollisionInfo, AudioEffectInfo } from '@/index'
-import { ScrollableScene } from '@/index'
+import type { SceneContext, HudScene, CollisionInfo, AudioEffectInfo } from '@/index'
 
 import { gameData } from '../../game-data'
-import { getTileAtlasFromData, getTileMapFromData } from '../../utils/parsers'
-import type { TileAtlasInfo } from '../../utils/models'
+import type { TileMapData } from '../../utils/models'
 import { MapLayerAsset } from '../../assets/MapLayerAsset'
 import type { LootableAsset } from '../../assets/Lootable'
+import type { ObjectInitInfo } from '../BaseScene'
+import { BaseScene } from '../BaseScene'
 
 import { SproutDoorAsset } from './assets/Door'
 import { SproutHeroAsset } from './assets/Hero'
@@ -19,9 +19,7 @@ import bgAudioSrc from './audio/lazy-village.mp3'
 import lootAudioSrc from './audio/success.mp3'
 import mapData from './maps/main.json'
 
-const tilesMap = getTileMapFromData(mapData)
-
-export class SproutLandsScene extends ScrollableScene {
+export class SproutLandsScene extends BaseScene {
   public readonly id = 'SproutLands'
 
   protected bgAudioSrc = bgAudioSrc
@@ -39,69 +37,28 @@ export class SproutLandsScene extends ScrollableScene {
 
   protected hud: HudScene = new SproutHudScene()
 
-  protected mapSize: RectSize = {
-    width: tilesMap.tileSize * tilesMap.cols,
-    height: tilesMap.tileSize * tilesMap.rows,
+  protected readonly objectInitInfoMap: Record<string, ObjectInitInfo> = {
+    fruit: { class: SproutFruitAsset },
+    cow: {
+      class: SproutCowAsset,
+      scope: { startX: 0, startY: 0, endX: this.mapSize.width, endY: this.mapSize.height },
+    },
+    hero: {
+      class: SproutHeroAsset,
+      scope: { startX: 0, startY: 0, endX: this.mapSize.width, endY: this.mapSize.height },
+    },
+    door: { class: SproutDoorAsset },
   }
 
-  private readonly tilesAtlas: TileAtlasInfo
-
   constructor() {
-    super()
-    this.tilesAtlas = getTileAtlasFromData(tilesetData, terrainTilesetImageSrc)
+    super(tilesetData, terrainTilesetImageSrc, mapData as TileMapData)
   }
 
   public load(context: SceneContext): void {
-    const { width, height } = this.mapSize
-
-    const doorPosition = {
-      x: 15 * tilesMap.tileSize,
-      y: 43 * tilesMap.tileSize,
-    }
-    const doorAsset = new SproutDoorAsset('Door', doorPosition, tilesMap.tileSize)
-    doorAsset.index = 4
-    this.addAsset(doorAsset)
-
-    const heroScope = { startX: 0, startY: 0, endX: width, endY: height }
-    const heroAsset = new SproutHeroAsset(
-      tilesMap.tileSize * 3,
-      this.onHeroDie.bind(this),
-      this.onHeroCollide.bind(this),
-    )
-    heroAsset.scope = heroScope
-    heroAsset.position = { x: 13 * tilesMap.tileSize, y: 45 * tilesMap.tileSize }
-    heroAsset.index = 3
-    this.addAsset(heroAsset)
-
-    const fruitPosition = {
-      x: 16 * tilesMap.tileSize,
-      y: 45 * tilesMap.tileSize,
-    }
-    const fruitAsset = new SproutFruitAsset('Fruit', fruitPosition, tilesMap.tileSize)
-    fruitAsset.index = 3
-    this.addAsset(fruitAsset)
-
-    const cowPosition = {
-      x: 14.5 * tilesMap.tileSize,
-      y: 43.25 * tilesMap.tileSize,
-    }
-    const cowAsset = new SproutCowAsset('Cow', tilesMap.tileSize * 2)
-    cowAsset.scope = heroScope
-    cowAsset.position = cowPosition
-    cowAsset.index = 3
-    this.addAsset(cowAsset)
-
-    tilesMap.layers.forEach((mapLayer, index) => {
-      const mapLayerAsset = new MapLayerAsset(`map-layer-${index}`, this.tilesAtlas, tilesMap)
-      mapLayerAsset.setTiles(mapLayer.data)
-      mapLayerAsset.visible = mapLayer.visible
-      mapLayerAsset.type = mapLayer.class
-      mapLayerAsset.index = index
-      this.addAsset(mapLayerAsset)
-    })
-
-    this.followAsset('SproutHero')
     super.load(context)
+    this.assets.SproutHero.addEventListener('collide', info => this.onHeroCollide(info as CollisionInfo))
+    this.assets.SproutHero.addEventListener('die', this.onHeroDie.bind(this))
+    this.followAsset('SproutHero')
   }
 
   private onHeroDie() {

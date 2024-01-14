@@ -3,6 +3,7 @@ import type {
   AssetMovement,
   AudioEffectInfo,
   CollisionInfo,
+  PointCoords,
   RectCoords,
   RectSize,
   RectangleCollideEntity,
@@ -65,7 +66,7 @@ const actionEntitySizeDelta: RectSize = {
 }
 
 export class SproutHeroAsset extends HeroAsset {
-  public readonly id = 'SproutHero'
+  declare public readonly id
 
   public movement: AssetMovement = { angle: 0, speed: normalSpeed }
 
@@ -87,13 +88,13 @@ export class SproutHeroAsset extends HeroAsset {
     },
   }
 
-  private readonly onDieCallback: (kind?: string) => void
-
-  private readonly onCollideCallback: (info: CollisionInfo) => void
-
   private isActioning = false
 
-  constructor(size: number, onDie: () => void, onCollide: (info: CollisionInfo) => void) {
+  constructor(
+    id: string,
+    globalPos: PointCoords,
+    size: number,
+  ) {
     const heroAtlasImage = new Image()
     heroAtlasImage.src = heroTilesetImageSrc
     const heroTileAtlas = {
@@ -103,9 +104,9 @@ export class SproutHeroAsset extends HeroAsset {
       tileSize: 48,
     }
     super(heroTileAtlas)
+    this.id = id
+    this.position = globalPos
     this.texture.size = { width: size, height: size }
-    this.onDieCallback = onDie
-    this.onCollideCallback = onCollide
   }
 
   public get collideEntities(): RectangleCollideEntity[] {
@@ -165,7 +166,7 @@ export class SproutHeroAsset extends HeroAsset {
         }
         break
     }
-    this.onCollideCallback && this.onCollideCallback(collisionInfo)
+    this.fireEvent('collide', collisionInfo)
   }
 
   public async hit(damage: number) {
@@ -173,7 +174,7 @@ export class SproutHeroAsset extends HeroAsset {
     gameData.lifes = Math.max(lifes - damage, 0)
     await this.playAudioEffect('hit')
     if (gameData.lifes === 0) {
-      this.onDieCallback()
+      this.fireEvent('die')
       await this.playAudioEffect('death')
     }
   }

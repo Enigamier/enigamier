@@ -3,6 +3,7 @@ import type {
   AssetMovement,
   AudioEffectInfo,
   CollisionInfo,
+  PointCoords,
   RectangleCollideEntity,
   TilesAnimationMap,
   TilesAtlas,
@@ -61,10 +62,11 @@ export class SproutCowAsset extends TileObjectAsset {
 
   private static readonly atlas: TilesAtlas
 
-  constructor(id: string, size: number) {
+  constructor(id: string, position: PointCoords, size: number) {
     super(SproutCowAsset.getAtlas())
     this.id = id
     this.texture.size = { width: size, height: size }
+    this.position = position
   }
 
   public get collideEntities(): RectangleCollideEntity[] {
