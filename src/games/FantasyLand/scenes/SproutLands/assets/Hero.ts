@@ -89,11 +89,11 @@ export class SproutHeroAsset extends HeroAsset {
 
   private readonly onDieCallback: (kind?: string) => void
 
-  private readonly onCollideCallback: (kind?: string) => void
+  private readonly onCollideCallback: (info: CollisionInfo) => void
 
   private isActioning = false
 
-  constructor(size: number, onDie: () => void, onCollide: (kind?: string) => void) {
+  constructor(size: number, onDie: () => void, onCollide: (info: CollisionInfo) => void) {
     const heroAtlasImage = new Image()
     heroAtlasImage.src = heroTilesetImageSrc
     const heroTileAtlas = {
@@ -114,7 +114,7 @@ export class SproutHeroAsset extends HeroAsset {
       {
         type,
         kind: 'hero',
-        collideWith: ['wall', 'door', 'house', 'cow'],
+        collideWith: ['wall', 'door', 'house', 'cow', 'loot'],
         data: this.heroGlobalCoords,
       },
     ]
@@ -165,15 +165,15 @@ export class SproutHeroAsset extends HeroAsset {
         }
         break
     }
-    this.onCollideCallback && this.onCollideCallback(collisionInfo.target.kind)
+    this.onCollideCallback && this.onCollideCallback(collisionInfo)
   }
 
   public async hit(damage: number) {
     const { lifes } = gameData
     gameData.lifes = Math.max(lifes - damage, 0)
-    this.onDieCallback()
     await this.playAudioEffect('hit')
     if (gameData.lifes === 0) {
+      this.onDieCallback()
       await this.playAudioEffect('death')
     }
   }

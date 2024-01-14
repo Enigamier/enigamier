@@ -19,7 +19,7 @@ const attackDamage = 1
 const attackInterval = 500
 const mooningInterval = 2000
 
-export class CowAsset extends TileObjectAsset {
+export class SproutCowAsset extends TileObjectAsset {
   public readonly id: string
 
   public movement: AssetMovement = { angle: 0, speed }
@@ -62,7 +62,7 @@ export class CowAsset extends TileObjectAsset {
   private static readonly atlas: TilesAtlas
 
   constructor(id: string, size: number) {
-    super(CowAsset.getAtlas())
+    super(SproutCowAsset.getAtlas())
     this.id = id
     this.texture.size = { width: size, height: size }
   }
@@ -79,7 +79,7 @@ export class CowAsset extends TileObjectAsset {
         collideWith: ['wall', 'hero'],
         data: {
           startX: startX + size / 4,
-          startY: startY + size / 2,
+          startY: startY + size / 2.5,
           endX: endX - size / 4,
           endY: endY - size / 8,
         },
@@ -165,7 +165,7 @@ export class CowAsset extends TileObjectAsset {
   }
 
   private static getAtlas() {
-    let atlas = CowAsset.atlas
+    let atlas = SproutCowAsset.atlas
     if (!atlas) {
       const cowAtlasImage = new Image()
       cowAtlasImage.src = cowTilesetImageSrc
