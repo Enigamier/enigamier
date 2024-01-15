@@ -74,7 +74,7 @@ const actionInfoMap: Record<string, ActionInfo> = {
   grain: { collideWith: ['chicken'] },
   rock: { collideWith: ['water'] },
   wood: { collideWith: ['bridge'] },
-  use: { collideWith: ['chest'] },
+  use: { collideWith: ['chest', 'bush'] },
 }
 
 // For front direction

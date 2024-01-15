@@ -74,6 +74,7 @@ export class SproutChestAsset extends TileObjectAsset {
     if (this.tilesAnimationId === 'open') {
       this.setTilesAnimation('opened')
       this.fireEvent('opened', this.loot)
+      this.loot = []
     } else if (this.tilesAnimationId === 'close') {
       this.setTilesAnimation('closed')
     }

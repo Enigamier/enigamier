@@ -11,6 +11,7 @@ import { SproutDoorAsset } from './assets/Door'
 import { SproutHeroAsset } from './assets/Hero'
 import { SproutLootAsset } from './assets/Loot'
 import { SproutChestAsset } from './assets/Chest'
+import { SproutBushAsset } from './assets/Bush'
 import { SproutCowAsset } from './assets/Cow'
 import { SproutHudScene } from './hud'
 
@@ -47,6 +48,7 @@ export class SproutLandsScene extends BaseScene {
       class: SproutHeroAsset,
       scope: { startX: 0, startY: 0, endX: this.mapSize.width, endY: this.mapSize.height },
     },
+    bush: { class: SproutBushAsset },
     chest: { class: SproutChestAsset },
     door: { class: SproutDoorAsset },
   }
@@ -55,20 +57,26 @@ export class SproutLandsScene extends BaseScene {
     super(tilesetData, terrainTilesetImageSrc, mapData as TileMapData)
   }
 
+  private get heroAsset(): SproutHeroAsset {
+    return this.assets.SproutHero as SproutHeroAsset
+  }
+
+  private get heroCharPosition(): PointCoords {
+    const { x, y } = this.heroAsset.globalCenterPoint
+    return { x: x - this.tileMap.tileSize / 2, y: y - this.tileMap.tileSize / 2 }
+  }
+
   public load(context: SceneContext): void {
     super.load(context)
-    this.createLoot('fruit', { x: 16 * this.tileMap.tileSize, y: 48 * this.tileMap.tileSize })
+
+    // this.createLoot('fruit', { x: 16 * this.tileMap.tileSize, y: 48 * this.tileMap.tileSize })
     const houseChest = this.assets.HouseChest as SproutChestAsset
     houseChest.setDirection('left')
     houseChest.loot = ['axe']
-    houseChest.addEventListener('opened', () => this.onChestOpened(houseChest))
-    this.assets.SproutHero.addEventListener('collide', info => this.onHeroCollide(info as CollisionInfo))
-    this.assets.SproutHero.addEventListener('die', this.onHeroDie.bind(this))
-    this.followAsset('SproutHero')
-  }
-
-  private onHeroDie() {
-    console.log('Hero died!')
+    houseChest.addEventListener('opened', loot => this.onChestOpened(loot as string[]))
+    this.heroAsset.addEventListener('collide', info => this.onHeroCollide(info as CollisionInfo))
+    this.heroAsset.addEventListener('die', this.onHeroDie.bind(this))
+    this.followAsset(this.heroAsset.id)
   }
 
   private onHeroCollide({ asset, source, target }: CollisionInfo) {
@@ -78,9 +86,21 @@ export class SproutLandsScene extends BaseScene {
         .forEach(layer => (layer as MapLayerAsset).visible = false)
     } else if (target.kind === 'loot') {
       this.onHeroLoot(asset as LootableAsset)
-    } else if (source.kind === 'hero-action-use' && target.kind === 'chest') {
-      (asset as SproutChestAsset).use()
+    } else if (source.kind === 'hero-action-use') {
+      switch (target.kind) {
+        case 'chest':
+          (asset as SproutChestAsset).use()
+          break
+        case 'bush': {
+          (asset as SproutBushAsset).use()
+          this.createLoot('fruit', this.heroCharPosition)
+        }
+      }
     }
+  }
+
+  private onHeroDie() {
+    console.log('Hero died!')
   }
 
   private onHeroLoot(asset: LootableAsset) {
@@ -92,14 +112,8 @@ export class SproutLandsScene extends BaseScene {
     }
   }
 
-  private onChestOpened(chest: SproutChestAsset) {
-    const { direction: dir, loot, scope: { startX: x, startY: y } } = chest
-    const size = this.tileMap.tileSize
-    loot.forEach(item => this.createLoot(item, {
-      x: dir === 'left' ? x - size : (dir === 'right' ? x + size : x),
-      y: dir === 'front' ? y + size : y,
-    }))
-    chest.loot = []
+  private onChestOpened(loot: string[]) {
+    loot.forEach(item => this.createLoot(item, this.heroCharPosition))
   }
 
   private createLoot(kind: string, pos: PointCoords) {
