@@ -64,12 +64,14 @@ export abstract class HeroAsset extends TileObjectAsset {
     }
   }
 
-  public onCollide({ asset, source, target }: CollisionInfo): void {
+  public onCollide(collisionInfo: CollisionInfo): void {
+    const { asset, source, target } = collisionInfo
     if (target.kind === 'wall') {
       solidCollisionResolution(this, source, target)
     } else if (target.kind === 'door') {
       (asset as DoorAsset).colliding = true
     }
+    this.fireEvent('collide', collisionInfo)
   }
 
   protected getNewAnimationId(newMode?: string, newDir?: string) {

@@ -24,9 +24,9 @@ export abstract class BaseScene extends ScrollableScene {
 
   protected readonly mapSize: RectSize
 
-  private readonly tilesAtlas: TileAtlasInfo
+  protected readonly tileMap: TileMapInfo
 
-  private readonly tileMap: TileMapInfo
+  private readonly tilesAtlas: TileAtlasInfo
 
   constructor(tilesetData: TilesetData, tilesetImgSrc: string, tileMapData: TileMapData) {
     super()
@@ -36,6 +36,11 @@ export abstract class BaseScene extends ScrollableScene {
       width: this.tileMap.tileSize * this.tileMap.cols,
       height: this.tileMap.tileSize * this.tileMap.rows,
     }
+  }
+
+  protected get objectLayerIndex(): number {
+    const objectLayerIndex = this.tileMap.layers.findIndex(layer => layer.type === 'objectgroup')
+    return objectLayerIndex >= 0 ? objectLayerIndex : 1
   }
 
   public load(context: SceneContext): void {

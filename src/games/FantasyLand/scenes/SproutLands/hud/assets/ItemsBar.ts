@@ -5,7 +5,7 @@ import { gameData } from '../../../../game-data'
 import spriteImgSrc from '../imgs/items-bar.png'
 
 const tileSize = 16
-const itemsTilesIndex = ['can', 'axe', 'pick', 'rock', 'grain', 'wood', 'fruit']
+const itemsTilesIndex = ['can', 'axe', 'pickaxe', 'rock', 'grain', 'wood', 'fruit']
 
 class ItemsBarTexture extends Texture {
   private readonly sprite: CanvasImageSource

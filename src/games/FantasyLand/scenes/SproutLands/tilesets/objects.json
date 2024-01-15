@@ -9,7 +9,7 @@
  "name":"objects",
  "objectalignment":"topleft",
  "spacing":0,
- "tilecount":3,
+ "tilecount":4,
  "tiledversion":"1.10.2",
  "tileheight":48,
  "tilerendersize":"grid",
@@ -42,6 +42,16 @@
          "imagewidth":48,
          "width":16,
          "x":16,
+         "y":0
+        }, 
+        {
+         "height":48,
+         "id":3,
+         "image":"..\/imgs\/chest-tileset.png",
+         "imageheight":96,
+         "imagewidth":240,
+         "width":48,
+         "x":0,
          "y":0
         }],
  "tilewidth":48,

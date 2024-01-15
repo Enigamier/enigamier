@@ -10,6 +10,7 @@ export interface AudioEffectInfo {
   src: string;
   gain?: number;
   pan?: number;
+  delay?: number;
   offset?: number;
   duration?: number;
   loadOffset?: number;
@@ -57,11 +58,15 @@ export abstract class GameObject {
 
   protected playAudioEffect(
     effect: string,
-    gain: number = this.audioEffectsInfo[effect].gain ?? 1,
-    pan: number = this.audioEffectsInfo[effect].pan ?? 0,
-    offset: number = this.audioEffectsInfo[effect].offset ?? 0,
-    duration: number | undefined = this.audioEffectsInfo[effect].duration ?? undefined,
+    options: Pick<AudioEffectInfo, 'gain' | 'pan' | 'offset' | 'duration' | 'delay'> = {},
   ) {
+    const {
+      gain = this.audioEffectsInfo[effect].gain ?? 1,
+      pan = this.audioEffectsInfo[effect].pan ?? 0,
+      delay = this.audioEffectsInfo[effect].delay ?? 0,
+      offset = this.audioEffectsInfo[effect].offset ?? 0,
+      duration = this.audioEffectsInfo[effect].duration ?? undefined,
+    } = options
     const { audioManager: am } = this.context
     const audioBuffer = this.audioEffectsMap[effect]
     const audioNode = am.context.createBufferSource()
@@ -71,7 +76,7 @@ export abstract class GameObject {
     const pannerNode = am.context.createStereoPanner()
     pannerNode.pan.value = pan
     am.connectNode(audioNode.connect(pannerNode).connect(gainNode))
-    audioNode.start(0, offset, duration)
+    audioNode.start(am.context.currentTime + delay, offset, duration)
     return new Promise<void>(resolve => audioNode.addEventListener('ended', () => resolve()))
   }
 }

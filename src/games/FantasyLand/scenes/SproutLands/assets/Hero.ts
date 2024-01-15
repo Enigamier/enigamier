@@ -16,6 +16,8 @@ import { HeroAsset } from '../../../assets/HeroAsset'
 
 import heroTilesetImageSrc from '../imgs/hero-tileset.png'
 import heroHitAudioSrc from '../audio/hero-hit.mp3'
+import heroUseAudioSrc from '../audio/hero-use.mp3'
+import heroAxeAudioSrc from '../audio/hero-axe.mp3'
 import heroDeathAudioSrc from '../audio/hero-death.mp3'
 
 function getAnimationTiles(): TilesAnimationMap {
@@ -37,7 +39,7 @@ function getAnimationTiles(): TilesAnimationMap {
 }
 
 function getActionAnimationTiles(): TilesAnimationMap {
-  return ['pick', 'axe', 'can', 'fruit', 'grain', 'rock', 'wood'].reduce((map, item, index) => {
+  return Object.keys(actionInfoMap).reduce((map, item, index) => {
     return {
       ...map,
       ...['front', 'back', 'left', 'right'].reduce((dirsMap, dir, dirIndex) => {
@@ -55,14 +57,30 @@ function getActionAnimationTiles(): TilesAnimationMap {
   }, {})
 }
 
+interface ActionInfo {
+  collideWith: string[];
+  effect?: string;
+}
+
 const normalSpeed = 300
-const tileAtlasCols = 18
+const tileAtlasCols = 20
 const actionKey = 'e'
+const defaultItemEffect = 'use'
+const actionInfoMap: Record<string, ActionInfo> = {
+  pickaxe: { collideWith: ['rock'], effect: 'axe' },
+  axe: { collideWith: ['tree'], effect: 'axe' },
+  can: { collideWith: ['grain'] },
+  fruit: { collideWith: ['cow-smell'] },
+  grain: { collideWith: ['chicken'] },
+  rock: { collideWith: ['water'] },
+  wood: { collideWith: ['bridge'] },
+  use: { collideWith: ['chest'] },
+}
 
 // For front direction
 const actionEntitySizeDelta: RectSize = {
-  width: .5,
-  height: .5,
+  width: .4,
+  height: .3,
 }
 
 export class SproutHeroAsset extends HeroAsset {
@@ -80,6 +98,17 @@ export class SproutHeroAsset extends HeroAsset {
       src: heroHitAudioSrc,
       loadOffset: .5,
       offset: .3,
+    },
+    use: {
+      src: heroUseAudioSrc,
+      loadOffset: 2,
+      duration: 1,
+    },
+    axe: {
+      src: heroAxeAudioSrc,
+      loadOffset: 2,
+      delay: .1,
+      duration: 1,
     },
     death: {
       src: heroDeathAudioSrc,
@@ -166,7 +195,6 @@ export class SproutHeroAsset extends HeroAsset {
         }
         break
     }
-    this.fireEvent('collide', collisionInfo)
   }
 
   public async hit(damage: number) {
@@ -180,10 +208,13 @@ export class SproutHeroAsset extends HeroAsset {
   }
 
   protected onTilesAnimationEnds(): void {
-    const [mode] = this.tilesAnimationId.split('-')
+    const [mode, _dir, item] = this.tilesAnimationId.split('-')
     if (mode === 'action') {
       const { [actionKey]: isActionPressed } = this.kbController.inputs
       this.isActioning = isActionPressed
+      if (this.isActioning) {
+        this.playAudioEffect(actionInfoMap[item].effect ?? defaultItemEffect)
+      }
     }
   }
 
@@ -196,8 +227,8 @@ export class SproutHeroAsset extends HeroAsset {
     const offset = Math.round((this.tileUnitSize - width) / 2)
     return {
       type: CollideEntityTypes.rectangle,
-      kind: `hero-action${item ? `-${item}` : ''}`,
-      collideWith: ['cow-smell'],
+      kind: `hero-action-${item}`,
+      collideWith: actionInfoMap[item].collideWith,
       data: {
         startX: (dir === 'front' || dir === 'back' ? startX + offset : (dir === 'left' ? startX - height : endX)),
         startY: (dir === 'left' || dir === 'right' ? startY + offset : (dir === 'front' ? endY : startY - height)),
@@ -209,13 +240,13 @@ export class SproutHeroAsset extends HeroAsset {
 
   private onKeyDown(key: string) {
     const { items, activeItem } = gameData.sproutLands
-    if (gameData.sproutLands.items.length) {
+    if (key === 'e') {
+      this.startActionAnimation()
+    } else if (gameData.sproutLands.items.length) {
       const keyNumber = parseInt(key)
       if (!isNaN(keyNumber) && keyNumber && keyNumber <= items.length) {
         const keyItem = items[keyNumber - 1]
-        gameData.sproutLands.activeItem = keyItem
-      } else if (key === 'e' && activeItem) {
-        this.startActionAnimation()
+        gameData.sproutLands.activeItem = activeItem === keyItem ? '' : keyItem
       }
     }
   }
@@ -224,8 +255,10 @@ export class SproutHeroAsset extends HeroAsset {
     const [mode, dir] = this.tilesAnimationId.split('-')
     if (mode !== 'action') {
       const { activeItem } = gameData.sproutLands
+      const item = activeItem.length > 0 ? activeItem : 'use'
       this.isActioning = true
-      this.setTilesAnimation(`action-${dir}-${activeItem}`)
+      this.setTilesAnimation(`action-${dir}-${item}`)
+      this.playAudioEffect(actionInfoMap[item].effect ?? defaultItemEffect)
     }
   }
 }
