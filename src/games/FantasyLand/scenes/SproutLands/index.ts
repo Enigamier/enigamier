@@ -20,6 +20,7 @@ import tilesetData from './tilesets/terrain.json'
 import bgAudioSrc from './audio/lazy-village.mp3'
 import lootAudioSrc from './audio/success.mp3'
 import mapData from './maps/main.json'
+import { SproutTreeAsset } from './assets/Tree'
 
 export class SproutLandsScene extends BaseScene {
   public readonly id = 'SproutLands'
@@ -49,6 +50,7 @@ export class SproutLandsScene extends BaseScene {
       scope: { startX: 0, startY: 0, endX: this.mapSize.width, endY: this.mapSize.height },
     },
     bush: { class: SproutBushAsset },
+    tree: { class: SproutTreeAsset },
     chest: { class: SproutChestAsset },
     door: { class: SproutDoorAsset },
   }
@@ -91,10 +93,21 @@ export class SproutLandsScene extends BaseScene {
         case 'chest':
           (asset as SproutChestAsset).use()
           break
-        case 'bush': {
+        case 'bush':
           (asset as SproutBushAsset).use()
           this.createLoot('fruit', this.heroCharPosition)
+          break
+        case 'tree': {
+          if ((asset as SproutTreeAsset).use()) {
+            this.createLoot('heart', this.heroCharPosition)
+          }
         }
+      }
+    } else if (source.kind === 'hero-action-axe') {
+      switch (target.kind) {
+        case 'tree':
+          (asset as SproutTreeAsset).chop()
+          this.createLoot('wood', this.heroCharPosition)
       }
     }
   }
@@ -104,8 +117,14 @@ export class SproutLandsScene extends BaseScene {
   }
 
   private onHeroLoot(asset: LootableAsset) {
-    const items = gameData.sproutLands.items
-    if (!items.includes(asset.kind)) {
+    const { lifes, sproutLands: { items } } = gameData
+    if (asset.kind === 'heart') {
+      if (lifes < 6) {
+        gameData.lifes++
+        this.removeAsset(asset)
+        this.playAudioEffect('loot')
+      }
+    } else if (!items.includes(asset.kind)) {
       items.push(asset.kind)
       this.removeAsset(asset)
       this.playAudioEffect('loot')

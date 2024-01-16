@@ -11,7 +11,7 @@ function getTilesAnimations(kind: string): TilesAnimationMap {
   return { [kind]: { tiles: [first, first + 1, first + 2, first + 1], interval: 300 } }
 }
 
-const looteables = ['fruit', 'can', 'rock', 'axe', 'pickaxe', 'wood', 'grain']
+const looteables = ['fruit', 'can', 'rock', 'axe', 'pickaxe', 'wood', 'grain', 'heart']
 const atlasColsCount = 3
 let lootNextId = 0
 
@@ -56,7 +56,7 @@ export class SproutLootAsset extends LootableAsset {
       lootAtlasImage.src = lootTilesetSrc
       atlas = {
         cols: atlasColsCount,
-        rows: 7,
+        rows: 8,
         image: lootAtlasImage,
         tileSize: 16,
       }

@@ -9,9 +9,9 @@
  "name":"objects",
  "objectalignment":"topleft",
  "spacing":0,
- "tilecount":4,
+ "tilecount":5,
  "tiledversion":"1.10.2",
- "tileheight":48,
+ "tileheight":64,
  "tilerendersize":"grid",
  "tiles":[
         {
@@ -19,7 +19,8 @@
          "id":0,
          "image":"..\/imgs\/hero-tileset.png",
          "imageheight":192,
-         "imagewidth":864,
+         "imagewidth":960,
+         "type":"hero",
          "width":48,
          "x":0,
          "y":0
@@ -30,6 +31,7 @@
          "image":"..\/imgs\/cow-tileset.png",
          "imageheight":64,
          "imagewidth":96,
+         "type":"cow",
          "width":32,
          "x":0,
          "y":0
@@ -38,8 +40,9 @@
          "height":16,
          "id":2,
          "image":"..\/imgs\/loot-tileset.png",
-         "imageheight":16,
+         "imageheight":128,
          "imagewidth":48,
+         "type":"fruit",
          "width":16,
          "x":16,
          "y":0
@@ -50,11 +53,23 @@
          "image":"..\/imgs\/chest-tileset.png",
          "imageheight":96,
          "imagewidth":240,
+         "type":"chest",
          "width":48,
          "x":0,
          "y":0
+        }, 
+        {
+         "height":64,
+         "id":4,
+         "image":"..\/imgs\/tree-tileset.png",
+         "imageheight":64,
+         "imagewidth":448,
+         "type":"tree",
+         "width":64,
+         "x":384,
+         "y":0
         }],
- "tilewidth":48,
+ "tilewidth":64,
  "type":"tileset",
  "version":"1.10"
 }
