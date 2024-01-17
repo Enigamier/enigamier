@@ -220,8 +220,8 @@
                  "type":"hero",
                  "visible":true,
                  "width":144,
-                 "x":480,
-                 "y":2208
+                 "x":1728,
+                 "y":2256
                 }, 
                 {
                  "gid":420,
@@ -234,6 +234,42 @@
                  "width":96,
                  "x":696,
                  "y":2076
+                }, 
+                {
+                 "gid":420,
+                 "height":96,
+                 "id":35,
+                 "name":"",
+                 "rotation":0,
+                 "type":"cow",
+                 "visible":true,
+                 "width":96,
+                 "x":864,
+                 "y":2160
+                }, 
+                {
+                 "gid":420,
+                 "height":96,
+                 "id":36,
+                 "name":"",
+                 "rotation":0,
+                 "type":"cow",
+                 "visible":true,
+                 "width":96,
+                 "x":528,
+                 "y":2112
+                }, 
+                {
+                 "gid":420,
+                 "height":96,
+                 "id":37,
+                 "name":"",
+                 "rotation":0,
+                 "type":"cow",
+                 "visible":true,
+                 "width":96,
+                 "x":672,
+                 "y":2256
                 }, 
                 {
                  "gid":195,
@@ -251,13 +287,47 @@
                  "gid":422,
                  "height":144,
                  "id":25,
-                 "name":"HouseChest",
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"left"
+                        }, 
+                        {
+                         "name":"loot",
+                         "type":"string",
+                         "value":"axe"
+                        }],
                  "rotation":0,
                  "type":"chest",
                  "visible":true,
                  "width":144,
                  "x":912,
                  "y":1920
+                }, 
+                {
+                 "gid":422,
+                 "height":144,
+                 "id":34,
+                 "name":"",
+                 "properties":[
+                        {
+                         "name":"direction",
+                         "type":"string",
+                         "value":"front"
+                        }, 
+                        {
+                         "name":"loot",
+                         "type":"string",
+                         "value":"pickaxe"
+                        }],
+                 "rotation":0,
+                 "type":"chest",
+                 "visible":true,
+                 "width":144,
+                 "x":1344,
+                 "y":1776
                 }, 
                 {
                  "gid":362,
@@ -330,6 +400,18 @@
                  "width":192,
                  "x":1512,
                  "y":2016
+                }, 
+                {
+                 "gid":374,
+                 "height":48,
+                 "id":38,
+                 "name":"",
+                 "rotation":0,
+                 "type":"rock",
+                 "visible":true,
+                 "width":48,
+                 "x":1680,
+                 "y":2304
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -536,7 +618,7 @@
          "name":"Roofs 1",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":80,
          "x":0,
          "y":0
@@ -604,13 +686,13 @@
          "name":"Roofs 2",
          "opacity":1,
          "type":"tilelayer",
-         "visible":true,
+         "visible":false,
          "width":80,
          "x":0,
          "y":0
         }],
  "nextlayerid":10,
- "nextobjectid":34,
+ "nextobjectid":39,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",

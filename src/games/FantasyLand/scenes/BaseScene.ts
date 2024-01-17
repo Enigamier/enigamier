@@ -15,6 +15,7 @@ import { MapLayerAsset } from '../assets/MapLayerAsset'
 export interface ObjectInitInfo {
   class: ObjectClass;
   scope?: RectCoords;
+  listeners?: Record<string, (asset: Asset, payload: unknown) => void>;
 }
 
 type ObjectClass = new(id: string, position: PointCoords, size: number) => Asset
@@ -67,18 +68,23 @@ export abstract class BaseScene extends ScrollableScene {
       const size = data.width
       const objectInitInfo = this.objectInitInfoMap[data.type]
       if (objectInitInfo) {
-        const { class: objectClass, scope } = objectInitInfo
-        const asset = new objectClass(id, position, size)
+        const { class: objectClass, scope, listeners = {} } = objectInitInfo
+        const asset = new objectClass(id, position, size) as Asset & Record<string, unknown>
         asset.scope = scope ?? asset.scope
         asset.index = index
+        data.properties?.forEach(prop => asset[prop.name] = prop.value)
+        Object.entries(listeners).forEach(
+          ([eventId, listener]) => asset.addEventListener(eventId, payload => listener(asset, payload)),
+        )
         this.addAsset(asset)
       }
     })
   }
 
   private addTileLayer(layer: TileLayerData, index: number) {
-    const mapLayerAsset = new MapLayerAsset(`map-layer-${index}`, this.tilesAtlas, this.tileMap)
-    mapLayerAsset.setTiles(layer.data)
+    const id = typeof layer.name === 'string' && layer.name.length ? layer.name : `map-layer-${index}`
+    const mapLayerAsset = new MapLayerAsset(id, this.tilesAtlas, this.tileMap)
+    mapLayerAsset.tiles = layer.data
     mapLayerAsset.visible = layer.visible
     mapLayerAsset.type = layer.class
     mapLayerAsset.index = index

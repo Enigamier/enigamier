@@ -19,7 +19,7 @@ export class SproutChestAsset extends TileObjectAsset {
 
   declare public readonly id: string
 
-  public loot: string[] = []
+  public loot?: string
 
   protected tilesAnimationsMap: TilesAnimationMap = getTilesAnimations('front')
 
@@ -45,6 +45,12 @@ export class SproutChestAsset extends TileObjectAsset {
     return this.dir
   }
 
+  public set direction(dir: string) {
+    this.tilesAnimationsMap = getTilesAnimations(dir)
+    this.dir = dir
+    this.setTilesAnimation(this.tilesAnimationId)
+  }
+
   public get collideEntities(): RectangleCollideEntity[] {
     return [
       { type: CollideEntityTypes.rectangle, kind: 'wall', data: this.scope },
@@ -64,17 +70,11 @@ export class SproutChestAsset extends TileObjectAsset {
     }
   }
 
-  public setDirection(dir: string) {
-    this.tilesAnimationsMap = getTilesAnimations(dir)
-    this.dir = dir
-    this.setTilesAnimation(this.tilesAnimationId)
-  }
-
   protected onTilesAnimationEnds(): void {
     if (this.tilesAnimationId === 'open') {
       this.setTilesAnimation('opened')
       this.fireEvent('opened', this.loot)
-      this.loot = []
+      delete this.loot
     } else if (this.tilesAnimationId === 'close') {
       this.setTilesAnimation('closed')
     }

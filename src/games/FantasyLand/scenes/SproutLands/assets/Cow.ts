@@ -13,6 +13,7 @@ import { ClockInterval, CollideEntityTypes, TileObjectAsset, solidCollisionResol
 import type { SproutHeroAsset } from './Hero'
 import cowTilesetImageSrc from '../imgs/cow-tileset.png'
 import mooningCowAudioSrc from '../audio/mooing-cow.mp3'
+import { gameData } from '@/games/FantasyLand/game-data'
 
 const actionOffsetDelta = 1
 const speed = 100
@@ -78,7 +79,7 @@ export class SproutCowAsset extends TileObjectAsset {
       {
         kind: 'cow',
         type,
-        collideWith: ['wall', 'hero'],
+        collideWith: ['wall', 'hero', 'cow'],
         data: {
           startX: startX + size / 4,
           startY: startY + size / 2.5,
@@ -133,11 +134,13 @@ export class SproutCowAsset extends TileObjectAsset {
     switch (source.kind) {
       case 'cow':
         switch (target.kind) {
+          case 'cow':
           case 'wall':
             solidCollisionResolution(this, source, target)
             break
           case 'hero':
             if (!this.attackingClock) {
+              this.hitHero(asset as SproutHeroAsset)
               this.attackingClock = new ClockInterval(
                 attackInterval,
                 this.hitHero.bind(this, asset as SproutHeroAsset),
@@ -163,6 +166,11 @@ export class SproutCowAsset extends TileObjectAsset {
   }
 
   private hitHero(heroAsset: SproutHeroAsset) {
+    const { items, activeItem } = gameData.sproutLands
+    if (activeItem === 'fruit') {
+      items.splice(items.indexOf(activeItem), 1)
+      gameData.sproutLands.activeItem = ''
+    }
     heroAsset.hit(attackDamage)
   }
 

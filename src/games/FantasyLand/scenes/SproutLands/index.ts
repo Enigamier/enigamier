@@ -2,6 +2,7 @@ import type { SceneContext, HudScene, CollisionInfo, AudioEffectInfo, PointCoord
 
 import { gameData } from '../../game-data'
 import type { TileMapData } from '../../utils/models'
+import type { MapTileCollideEntity } from '../../assets/MapLayerAsset'
 import { MapLayerAsset } from '../../assets/MapLayerAsset'
 import type { LootableAsset } from '../../assets/Lootable'
 import type { ObjectInitInfo } from '../BaseScene'
@@ -21,6 +22,7 @@ import bgAudioSrc from './audio/lazy-village.mp3'
 import lootAudioSrc from './audio/success.mp3'
 import mapData from './maps/main.json'
 import { SproutTreeAsset } from './assets/Tree'
+import { SproutRockAsset } from './assets/Rock'
 
 export class SproutLandsScene extends BaseScene {
   public readonly id = 'SproutLands'
@@ -48,10 +50,21 @@ export class SproutLandsScene extends BaseScene {
     hero: {
       class: SproutHeroAsset,
       scope: { startX: 0, startY: 0, endX: this.mapSize.width, endY: this.mapSize.height },
+      listeners: {
+        collide: (_asset, info) => this.onHeroCollide(info as CollisionInfo),
+        die: () => this.onHeroDie(),
+      },
     },
     bush: { class: SproutBushAsset },
-    tree: { class: SproutTreeAsset },
-    chest: { class: SproutChestAsset },
+    rock: { class: SproutRockAsset },
+    tree: {
+      class: SproutTreeAsset,
+      listeners: { felled: () => this.createLoot('wood', this.heroCharPosition) },
+    },
+    chest: {
+      class: SproutChestAsset,
+      listeners: { opened: (_asset, loot) => this.onChestOpened(loot as string) },
+    },
     door: { class: SproutDoorAsset },
   }
 
@@ -72,12 +85,6 @@ export class SproutLandsScene extends BaseScene {
     super.load(context)
 
     // this.createLoot('fruit', { x: 16 * this.tileMap.tileSize, y: 48 * this.tileMap.tileSize })
-    const houseChest = this.assets.HouseChest as SproutChestAsset
-    houseChest.setDirection('left')
-    houseChest.loot = ['axe']
-    houseChest.addEventListener('opened', loot => this.onChestOpened(loot as string[]))
-    this.heroAsset.addEventListener('collide', info => this.onHeroCollide(info as CollisionInfo))
-    this.heroAsset.addEventListener('die', this.onHeroDie.bind(this))
     this.followAsset(this.heroAsset.id)
   }
 
@@ -104,11 +111,19 @@ export class SproutLandsScene extends BaseScene {
         }
       }
     } else if (source.kind === 'hero-action-axe') {
-      switch (target.kind) {
-        case 'tree':
-          (asset as SproutTreeAsset).chop()
-          this.createLoot('wood', this.heroCharPosition)
-      }
+      (asset as SproutTreeAsset).chop()
+    } else if (source.kind === 'hero-action-pickaxe') {
+      (asset as SproutRockAsset).use()
+      this.createLoot('rock', this.heroCharPosition)
+    } else if (source.kind === 'hero-action-rock') {
+      const tileIndex = (target as MapTileCollideEntity).tileIndex
+      const nonCollidingWaterTileId = 298
+      const waterRockTileId = 271
+      const waterLayer = this.assets.Water as MapLayerAsset
+      const floorLayer = this.assets['Floor 1'] as MapLayerAsset
+      this.removeItem('rock')
+      waterLayer.tiles = waterLayer.tiles.toSpliced(tileIndex, 1, nonCollidingWaterTileId)
+      floorLayer.tiles = floorLayer.tiles.toSpliced(tileIndex, 1, waterRockTileId)
     }
   }
 
@@ -131,13 +146,21 @@ export class SproutLandsScene extends BaseScene {
     }
   }
 
-  private onChestOpened(loot: string[]) {
-    loot.forEach(item => this.createLoot(item, this.heroCharPosition))
+  private onChestOpened(item: string) {
+    this.createLoot(item, this.heroCharPosition)
   }
 
   private createLoot(kind: string, pos: PointCoords) {
     const lootAsset = new SproutLootAsset(kind, pos, this.tileMap.tileSize)
     lootAsset.index = this.objectLayerIndex
     this.addAsset(lootAsset)
+  }
+
+  private removeItem(item: string) {
+    const { items, activeItem } = gameData.sproutLands
+    items.splice(items.indexOf(item), 1)
+    if (activeItem === item) {
+      gameData.sproutLands.activeItem = ''
+    }
   }
 }

@@ -176,11 +176,8 @@ export class SproutHeroAsset extends HeroAsset {
   public update(delta: number): void {
     super.update(delta)
     const [mode, dir] = this.tilesAnimationId.split('-')
-    const { [actionKey]: isActionPressed } = this.kbController.inputs
-    if (mode === 'action' && !isActionPressed) {
-      if (!this.isActioning) {
-        this.setTilesAnimation(`stand-${dir}`)
-      }
+    if (mode === 'action' && !this.isActioning) {
+      this.setTilesAnimation(`stand-${dir}`)
     }
   }
 
@@ -209,9 +206,10 @@ export class SproutHeroAsset extends HeroAsset {
 
   protected onTilesAnimationEnds(): void {
     const [mode, _dir, item] = this.tilesAnimationId.split('-')
+    const { activeItem } = gameData.sproutLands
     if (mode === 'action') {
       const { [actionKey]: isActionPressed } = this.kbController.inputs
-      this.isActioning = isActionPressed
+      this.isActioning = (item === 'use' || activeItem === item) && isActionPressed
       if (this.isActioning) {
         this.playAudioEffect(actionInfoMap[item].effect ?? defaultItemEffect)
       }

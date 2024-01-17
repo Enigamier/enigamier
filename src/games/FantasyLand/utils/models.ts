@@ -41,6 +41,11 @@ export interface TileMapLayerObjectData {
   name: string;
   width: number;
   height: number;
+  properties?: {
+    name: string;
+    type: string;
+    value: number | string | boolean;
+  }[];
 }
 
 export interface ObjectLayerData extends BaseTileMapLayerData {

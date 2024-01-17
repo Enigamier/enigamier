@@ -3,6 +3,10 @@ import type { RectangleCollideEntity, TilesAnimationInfo, TilesMap } from '@/ind
 
 import type { TileAtlasInfo, TileObjectData } from '../utils/models'
 
+export interface MapTileCollideEntity extends RectangleCollideEntity {
+  tileIndex: number;
+}
+
 export class MapLayerAsset extends TileMapAsset {
   declare public id: string
 
@@ -10,11 +14,13 @@ export class MapLayerAsset extends TileMapAsset {
 
   public type?: string
 
-  private mapCollisionEntities: RectangleCollideEntity[] = []
-
   private readonly atlas: TileAtlasInfo
 
+  private mapCollisionEntities: MapTileCollideEntity[] = []
+
   private tilesAnimationsTimers: Record<number, { clock: ClockInterval; index: number }> = {}
+
+  private loadedTiles: number[] = []
 
   constructor(id: string, atlas: TileAtlasInfo, map: TilesMap) {
     super(atlas, map)
@@ -22,8 +28,19 @@ export class MapLayerAsset extends TileMapAsset {
     this.atlas = atlas
   }
 
-  public get collideEntities(): RectangleCollideEntity[] {
+  public get collideEntities(): MapTileCollideEntity[] {
     return this.mapCollisionEntities
+  }
+
+  public get tiles(): number[] {
+    return this.loadedTiles
+  }
+
+  public set tiles(tiles: number[]) {
+    this.loadedTiles = tiles
+    this.texture.tiles = tiles
+    this.updateMapCollideEntities()
+    this.startTilesAnimations()
   }
 
   private get tilesAnimationsMap(): Record<number, TilesAnimationInfo> {
@@ -74,12 +91,6 @@ export class MapLayerAsset extends TileMapAsset {
     }
   }
 
-  public setTiles(tiles: number[]) {
-    this.texture.tiles = tiles
-    this.updateMapCollideEntities()
-    this.startTilesAnimations()
-  }
-
   private startTilesAnimations(): void {
     this.tilesAnimationsTimers = {}
     Object.entries(this.tilesAnimationsMap).forEach(([id, animation]) => {
@@ -104,7 +115,7 @@ export class MapLayerAsset extends TileMapAsset {
     this.mapCollisionEntities = this.texture.tiles
       .map((mapTileId, tileIndex) => {
         const tileId = mapTileId - 1
-        let collideEntities: RectangleCollideEntity[] = []
+        let collideEntities: MapTileCollideEntity[] = []
         if (this.tileCollisionObjectsMap[tileId]) {
           const { cols, tileSize } = this.texture.map
           const row = Math.floor(tileIndex / cols)
@@ -116,6 +127,7 @@ export class MapLayerAsset extends TileMapAsset {
               type: CollideEntityTypes.rectangle,
               data: { startX, startY, endX: startX + width, endY: startY + height },
               kind: type,
+              tileIndex,
             }
           })
         }

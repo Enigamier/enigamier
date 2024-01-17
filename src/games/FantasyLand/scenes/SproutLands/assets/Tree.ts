@@ -67,6 +67,7 @@ export class SproutTreeAsset extends TileObjectAsset {
   protected onTilesAnimationEnds(): void {
     if (this.tilesAnimationId === 'falling') {
       this.setTilesAnimation('fallen')
+      this.fireEvent('felled')
     }
   }
 
