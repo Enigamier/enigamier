@@ -9,7 +9,7 @@
  "name":"objects",
  "objectalignment":"topleft",
  "spacing":0,
- "tilecount":5,
+ "tilecount":6,
  "tiledversion":"1.10.2",
  "tileheight":64,
  "tilerendersize":"grid",
@@ -67,6 +67,16 @@
          "type":"tree",
          "width":64,
          "x":384,
+         "y":0
+        }, 
+        {
+         "height":16,
+         "id":5,
+         "image":"..\/imgs\/grain-tileset.png",
+         "imageheight":16,
+         "imagewidth":64,
+         "width":16,
+         "x":48,
          "y":0
         }],
  "tilewidth":64,

@@ -1495,6 +1495,82 @@
          "probability":0.00999999977648258
         }, 
         {
+         "id":298,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":16,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "type":"bridge-h",
+                     "visible":true,
+                     "width":16,
+                     "x":0,
+                     "y":0
+                    }, 
+                    {
+                     "height":14,
+                     "id":2,
+                     "name":"",
+                     "rotation":0,
+                     "type":"wall",
+                     "visible":true,
+                     "width":16,
+                     "x":0,
+                     "y":-3
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"bridge-h"
+        }, 
+        {
+         "id":299,
+         "objectgroup":
+            {
+             "draworder":"index",
+             "id":2,
+             "name":"",
+             "objects":[
+                    {
+                     "height":16,
+                     "id":1,
+                     "name":"",
+                     "rotation":0,
+                     "type":"bridge-v",
+                     "visible":true,
+                     "width":16,
+                     "x":0,
+                     "y":0
+                    }, 
+                    {
+                     "height":14,
+                     "id":2,
+                     "name":"",
+                     "rotation":0,
+                     "type":"wall",
+                     "visible":true,
+                     "width":16,
+                     "x":0,
+                     "y":-3
+                    }],
+             "opacity":1,
+             "type":"objectgroup",
+             "visible":true,
+             "x":0,
+             "y":0
+            },
+         "type":"bridge-v"
+        }, 
+        {
          "animation":[
                 {
                  "duration":250,
@@ -1516,7 +1592,6 @@
          "objectgroup":
             {
              "draworder":"index",
-             "id":2,
              "name":"",
              "objects":[
                     {

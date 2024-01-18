@@ -20,9 +20,12 @@ import terrainTilesetImageSrc from './imgs/terrain-tileset.png'
 import tilesetData from './tilesets/terrain.json'
 import bgAudioSrc from './audio/lazy-village.mp3'
 import lootAudioSrc from './audio/success.mp3'
+import bridgeBuildingAudioSrc from './audio/bridge-building.mp3'
+import waterSplashAudioSrc from './audio/water-splash.mp3'
 import mapData from './maps/main.json'
 import { SproutTreeAsset } from './assets/Tree'
 import { SproutRockAsset } from './assets/Rock'
+import { SproutGrainAsset } from './assets/Grain'
 
 export class SproutLandsScene extends BaseScene {
   public readonly id = 'SproutLands'
@@ -37,6 +40,20 @@ export class SproutLandsScene extends BaseScene {
       src: lootAudioSrc,
       loadOffset: 1.5,
       duration: 1.2,
+    },
+    bridgeBuilding: {
+      src: bridgeBuildingAudioSrc,
+      loadOffset: .7,
+      loadDuration: .1,
+      duration: 2,
+      delay: .4,
+    },
+    waterSplash: {
+      src: waterSplashAudioSrc,
+      loadOffset: 1,
+      duration: .7,
+      offset: .1,
+      delay: .2,
     },
   }
 
@@ -57,13 +74,17 @@ export class SproutLandsScene extends BaseScene {
     },
     bush: { class: SproutBushAsset },
     rock: { class: SproutRockAsset },
+    grain: {
+      class: SproutGrainAsset,
+      listeners: { loot: () => this.createLoot('grain', this.heroCharPosition) },
+    },
     tree: {
       class: SproutTreeAsset,
       listeners: { felled: () => this.createLoot('wood', this.heroCharPosition) },
     },
     chest: {
       class: SproutChestAsset,
-      listeners: { opened: (_asset, loot) => this.onChestOpened(loot as string) },
+      listeners: { opened: (_asset, loot) => this.createLoot(loot as string, this.heroCharPosition) },
     },
     door: { class: SproutDoorAsset },
   }
@@ -88,7 +109,7 @@ export class SproutLandsScene extends BaseScene {
     this.followAsset(this.heroAsset.id)
   }
 
-  private onHeroCollide({ asset, source, target }: CollisionInfo) {
+  private async onHeroCollide({ asset, source, target }: CollisionInfo) {
     if (target.kind === 'house') {
       this.assetsList
         .filter(layer => layer instanceof MapLayerAsset && layer.type === 'roof')
@@ -99,6 +120,9 @@ export class SproutLandsScene extends BaseScene {
       switch (target.kind) {
         case 'chest':
           (asset as SproutChestAsset).use()
+          break
+        case 'grain':
+          (asset as SproutGrainAsset).use()
           break
         case 'bush':
           (asset as SproutBushAsset).use()
@@ -112,18 +136,36 @@ export class SproutLandsScene extends BaseScene {
       }
     } else if (source.kind === 'hero-action-axe') {
       (asset as SproutTreeAsset).chop()
+    } else if (source.kind === 'hero-action-can') {
+      (asset as SproutGrainAsset).use()
     } else if (source.kind === 'hero-action-pickaxe') {
       (asset as SproutRockAsset).use()
       this.createLoot('rock', this.heroCharPosition)
     } else if (source.kind === 'hero-action-rock') {
       const tileIndex = (target as MapTileCollideEntity).tileIndex
       const nonCollidingWaterTileId = 298
+      const collidingWaterTileId = 299
       const waterRockTileId = 271
       const waterLayer = this.assets.Water as MapLayerAsset
       const floorLayer = this.assets['Floor 1'] as MapLayerAsset
       this.removeItem('rock')
+      waterLayer.tiles = waterLayer.tiles.toSpliced(tileIndex, 1, collidingWaterTileId)
+      await this.playAudioEffect('waterSplash')
       waterLayer.tiles = waterLayer.tiles.toSpliced(tileIndex, 1, nonCollidingWaterTileId)
       floorLayer.tiles = floorLayer.tiles.toSpliced(tileIndex, 1, waterRockTileId)
+    } else if (source.kind === 'hero-action-wood') {
+      const tileIndex = (target as MapTileCollideEntity).tileIndex
+      const nonCollidingWaterTileId = 298
+      const collidingWaterTileId = 301
+      const bridgeTileId = target.kind === 'bridge-h' ? 319 : 338
+      const waterLayer = this.assets.Water as MapLayerAsset
+      const floorLayer = this.assets['Floor 2'] as MapLayerAsset
+      this.removeItem('wood')
+      console.log('bridge')
+      waterLayer.tiles = waterLayer.tiles.toSpliced(tileIndex, 1, collidingWaterTileId)
+      await this.playAudioEffect('bridgeBuilding')
+      waterLayer.tiles = waterLayer.tiles.toSpliced(tileIndex, 1, nonCollidingWaterTileId)
+      floorLayer.tiles = floorLayer.tiles.toSpliced(tileIndex, 1, bridgeTileId)
     }
   }
 
@@ -144,10 +186,6 @@ export class SproutLandsScene extends BaseScene {
       this.removeAsset(asset)
       this.playAudioEffect('loot')
     }
-  }
-
-  private onChestOpened(item: string) {
-    this.createLoot(item, this.heroCharPosition)
   }
 
   private createLoot(kind: string, pos: PointCoords) {

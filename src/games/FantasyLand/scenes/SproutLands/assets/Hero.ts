@@ -18,6 +18,7 @@ import heroTilesetImageSrc from '../imgs/hero-tileset.png'
 import heroHitAudioSrc from '../audio/hero-hit.mp3'
 import heroUseAudioSrc from '../audio/hero-use.mp3'
 import heroAxeAudioSrc from '../audio/hero-axe.mp3'
+import heroCanAudioSrc from '../audio/hero-can.mp3'
 import heroDeathAudioSrc from '../audio/hero-death.mp3'
 
 function getAnimationTiles(): TilesAnimationMap {
@@ -69,12 +70,12 @@ const defaultItemEffect = 'use'
 const actionInfoMap: Record<string, ActionInfo> = {
   pickaxe: { collideWith: ['rock'], effect: 'axe' },
   axe: { collideWith: ['tree'], effect: 'axe' },
-  can: { collideWith: ['grain'] },
+  can: { collideWith: ['grain-plant'], effect: 'can' },
   fruit: { collideWith: ['cow-smell'] },
   grain: { collideWith: ['chicken'] },
   rock: { collideWith: ['water'] },
-  wood: { collideWith: ['bridge'] },
-  use: { collideWith: ['chest', 'bush', 'tree'] },
+  wood: { collideWith: ['bridge-h', 'bridge-v'] },
+  use: { collideWith: ['chest', 'bush', 'tree', 'grain'] },
 }
 
 // For front direction
@@ -109,6 +110,11 @@ export class SproutHeroAsset extends HeroAsset {
       loadOffset: 2,
       delay: .1,
       duration: 1,
+    },
+    can: {
+      src: heroCanAudioSrc,
+      offset: 2.7,
+      duration: 1.1,
     },
     death: {
       src: heroDeathAudioSrc,
